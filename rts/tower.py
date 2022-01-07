@@ -39,7 +39,7 @@ class Tower(Sprite):
     self.surface = Surface(TOWER_SIZE)
     self.surface.fill(TOWER_COLOR)
     self.rectangle = self.surface.get_rect()
-    self.rectangle.move(x, y)
+    self.rectangle.move_ip(x, y)
 
   def move(self, pressed_keys: Sequence[bool]):
     """
