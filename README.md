@@ -34,6 +34,18 @@ poetry shell
 python -m rts
 ```
 
+## How to test
+
+```
+poetry run python -m pytest -v tests/ # outside the venv
+
+# or
+
+python -m pytest -v tests/ # inside the venv
+```
+
+Tests are executed remotely only for pull_requests. Runs them before commit and push changes. Pre commit hooks will be added to the project in near future.
+
 ## How to contribute
 
 Any contribute is appreciated. Fork the repo and open pull request or open issue for any advice.
