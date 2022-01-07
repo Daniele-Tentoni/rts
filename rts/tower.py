@@ -1,4 +1,5 @@
 from typing import Sequence
+
 from .constants import (
   TOWER_SIZE,
   TOWER_COLOR,
@@ -14,7 +15,7 @@ from pygame.locals import (
     K_RIGHT,
 )
 
-from pygame import Rect, Surface
+from pygame import Surface
 from pygame.sprite import Sprite
 
 class Tower(Sprite):
@@ -23,8 +24,6 @@ class Tower(Sprite):
 
   It contains method to draw it and update his position. You can update his position without drawing it.
   """
-  rectangle: Rect
-  surface: Surface
 
   def __init__(self, x: float, y: float) -> None:
     """Creates a new Tower instance.
@@ -36,12 +35,12 @@ class Tower(Sprite):
         y (float): initial position
     """
     super(Tower, self).__init__()
-    self.surface = Surface(TOWER_SIZE)
-    self.surface.fill(TOWER_COLOR)
-    self.rectangle = self.surface.get_rect()
-    self.rectangle.move_ip(x, y)
+    self.surf = Surface(TOWER_SIZE)
+    self.surf.fill(TOWER_COLOR)
+    self.rect = self.surf.get_rect()
+    self.rect.move_ip(x, y)
 
-  def move(self, pressed_keys: Sequence[bool]):
+  def update(self, pressed_keys: Sequence[bool]):
     """
     Move the tower object by pressed keys event.
     This only change coordinates of the object. Use draw to
@@ -61,17 +60,17 @@ class Tower(Sprite):
     if pressed_keys[K_RIGHT]:
       x = 0.2 * factor
 
-    self.rectangle.move_ip(x, y)
+    self.rect.move_ip(x, y)
 
     # Keep player on the screen
-    if self.rectangle.left < 0:
-      self.rectangle.left = 0
-    if self.rectangle.right > SCREEN_WIDTH:
-      self.rectangle.right = SCREEN_WIDTH
-    if self.rectangle.top <= 0:
-      self.rectangle.top = 0
-    if self.rectangle.bottom >= SCREEN_HEIGHT:
-      self.rectangle.bottom = SCREEN_HEIGHT
+    if self.rect.left < 0:
+      self.rect.left = 0
+    if self.rect.right > SCREEN_WIDTH:
+      self.rect.right = SCREEN_WIDTH
+    if self.rect.top <= 0:
+      self.rect.top = 0
+    if self.rect.bottom >= SCREEN_HEIGHT:
+      self.rect.bottom = SCREEN_HEIGHT
 
   def draw(self, screen: Surface) -> None:
     """
@@ -80,4 +79,4 @@ class Tower(Sprite):
     Args:
         screen (Surface): Screen Surface.
     """
-    screen.blit(self.surface, self.rectangle) # (self.x, self.y)
+    screen.blit(self.surf, self.rect) # (self.x, self.y)

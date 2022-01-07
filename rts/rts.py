@@ -12,6 +12,9 @@ from pygame.locals import (
     KEYUP,
     QUIT,
 )
+from pygame.sprite import Group
+
+from rts.soldier import Soldier
 
 from .constants import (
   TOWER_WIDTH,
@@ -25,6 +28,10 @@ from .constants import (
 from .tower import Tower
 
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+pygame.display.set_caption('Real Time Strategy')
+
+# ADD SOLDIERS EVENT ID
+ADDSOLDIERS = pygame.USEREVENT + 1
 
 factor = 1.5
 speed = 1.5
@@ -41,7 +48,9 @@ def quit_game(event) -> bool:
   """
   return event.type == QUIT or event.type == KEYDOWN and event.key == K_ESCAPE
 
-towers: list[Tower] = list()
+towers: Group = Group()
+soldiers: Group = Group()
+all_sprites: Group = Group()
 
 def create_tower(towers: list[Tower]):
   towers.append(Tower(0, 0))
@@ -56,33 +65,41 @@ def game_cycle() -> None:
   for event in pygame.event.get():
     if quit_game(event):
       running = False
-    # movement = move_towers(event)
-    # if movement[0] is not 0 and movement[1] is not 0:
-      # for t in towers:
-        # print(f"TOWER {t.x} {t.y}")
-        # t.move(movement[0] * speed, movement[1] * speed)
+    elif event.type == ADDSOLDIERS:
+      soldier = Soldier()
+      soldiers.add(soldier)
+      all_sprites.add(soldier)
 
   pressed_keys = pygame.key.get_pressed()
-  for t in towers:
-    t.move(pressed_keys)
+  towers.update(pressed_keys)
+    # t.move(pressed_keys)
+
+  soldiers.update()
 
   # Draw towers
-  for t in towers:
-    t.draw(screen)
+  for sprite in all_sprites:
+    screen.blit(sprite.surf, sprite.rect)
 
   # Flip the display
   pygame.display.flip()
 
   return running
 
-def main():
-  pygame.init()
-
+def create_objects() -> None:
   # Init towers
   for t in range(0, 2):
     x: float = SCREEN_WIDTH / 3 * (t + 1)
     y: float = SCREEN_HEIGHT / 2
-    towers.append(Tower(x, y))
+    tower = Tower(x, y)
+    towers.add(tower)
+    all_sprites.add(tower)
+
+  pygame.time.set_timer(ADDSOLDIERS, 250)
+
+def main():
+  pygame.init()
+
+  create_objects()
 
   running = True
   while running:
