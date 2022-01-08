@@ -2,7 +2,7 @@
 
 Real time strategy project.
 
-Connect towers to send soldiers to another one. Win how can conquest all towers on the board. Connect to your friends or play online with other players from all around the world. For player guides, visit [RTS on Read The Docs](rts.readthedocs.io).
+Connect towers to send soldiers to another one. Win how can conquest all towers on the board. Connect to your friends or play online with other players from all around the world. For player guides, visit [RTS on Read The Docs](https://rts.readthedocs.io).
 
 **Table of Contents**:
 
