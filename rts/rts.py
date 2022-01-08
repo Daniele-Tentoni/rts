@@ -86,7 +86,6 @@ def game_cycle() -> None:
 
   pressed_keys = pygame.key.get_pressed()
   towers.update(pressed_keys)
-    # t.move(pressed_keys)
 
   soldiers.update()
 
@@ -99,7 +98,8 @@ def game_cycle() -> None:
     if pygame.sprite.spritecollideany(tower, soldiers):
       # If so, then remove the player and stop the loop
       tower.kill()
-      running = False
+      if len(towers) == 0:
+        running = False
 
   # Flip the display
   pygame.display.flip()
