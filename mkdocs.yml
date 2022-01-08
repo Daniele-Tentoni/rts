@@ -2,7 +2,9 @@ site_name: RTS Docs
 site_url: https://rts.readthedocs.io/
 
 nav:
-  - Home: index.md
-  - Players: players/index.md
+  - Home: "index.md"
+  - "Players":
+      - "Players": "players/index.md"
+      - "Tower": "players/tower.md"
 
 theme: readthedocs
