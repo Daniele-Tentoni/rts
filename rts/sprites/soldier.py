@@ -3,31 +3,32 @@ import random
 from pygame import Surface
 from pygame.sprite import Sprite
 
-from rts.tower import Tower
-
-from .constants import (
+from rts.constants import (
   LINK_COLOR,
   LINK_SIZE,
   SCREEN_WIDTH,
   SCREEN_HEIGHT
 )
 
-class Soldier(Sprite):
-  tower: Tower
+import rts.sprites.tower
 
-  def __init__(self, tower_mother: Tower) -> None:
+class Soldier(Sprite):
+
+  mother_tower: rts.sprites.tower.Tower
+
+  def __init__(self, mother_tower: rts.sprites.tower.Tower) -> None:
     """
     Create a new Soldier entity.
 
     Args:
-        tower_mother (Tower): This is the mother tower, where the soldier has been generated.
+        mother_tower (Tower): This is the mother tower, where the soldier has been generated.
     """
-    if not tower_mother:
-      raise ValueError('tower_mother argument must be valued')
+    if not mother_tower:
+      raise ValueError('mother_tower argument must be valued')
 
     super(Soldier, self).__init__()
 
-    self.tower = tower_mother
+    self.tower = mother_tower
 
     # Sprite stuff.
     self.surf = Surface(LINK_SIZE)

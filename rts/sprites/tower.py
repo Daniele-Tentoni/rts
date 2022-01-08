@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from .constants import (
+from rts.constants import (
   TOWER_SIZE,
   TOWER_COLOR,
 
@@ -16,7 +16,11 @@ from pygame.locals import (
 )
 
 from pygame import Surface
-from pygame.sprite import Sprite
+from pygame.sprite import Group, Sprite
+
+# Array with soldiers limits per level for towers
+# First one is the minimum, the second one is the maximum.
+limits_per_level = [(0, 10)]
 
 class Tower(Sprite):
   """
@@ -24,6 +28,8 @@ class Tower(Sprite):
 
   It contains method to draw it and update his position. You can update his position without drawing it.
   """
+  level: int = 1
+  soldiers: Group
 
   def __init__(self, x: float, y: float) -> None:
     """Creates a new Tower instance.
@@ -39,6 +45,7 @@ class Tower(Sprite):
     self.surf.fill(TOWER_COLOR)
     self.rect = self.surf.get_rect()
     self.rect.move_ip(x, y)
+    self.soldiers = Group()
 
   def update(self, pressed_keys: Sequence[bool]):
     """
@@ -80,3 +87,13 @@ class Tower(Sprite):
         screen (Surface): Screen Surface.
     """
     screen.blit(self.surf, self.rect) # (self.x, self.y)
+
+  def spawn_soldier(self):
+    import rts.sprites.soldier
+
+    if len(self.soldiers) < limits_per_level[self.level - 1][1]:
+      new_soldier = rts.sprites.soldier.Soldier(self)
+      self.soldiers.add(new_soldier)
+      return new_soldier
+
+    return None
