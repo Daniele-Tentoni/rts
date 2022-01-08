@@ -1,3 +1,5 @@
+# Imports
+
 import pygame
 
 # Import pygame.locals for easier access to key coordinates
@@ -12,11 +14,15 @@ from pygame.locals import (
     KEYUP,
     QUIT,
 )
+from pygame.event import Event
 from pygame.sprite import Group
+from pygame.font import SysFont
 
 from rts.soldier import Soldier
 
 from .constants import (
+  GAME_NAME,
+  TEXT_COLOR,
   TOWER_WIDTH,
   TOWER_HEIGHT,
   TOWER_COLOR,
@@ -27,8 +33,18 @@ from .constants import (
 
 from .tower import Tower
 
+# Globals
+
+pygame.font.init()
+sys_font = SysFont("Arial", 15)
+
+towers: Group = Group()
+soldiers: Group = Group()
+all_sprites: Group = Group()
+
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-pygame.display.set_caption('Real Time Strategy')
+pygame.display.set_caption(GAME_NAME)
+label = sys_font.render("Send soldiers from your tower to enemies ones to conquer them.", 1, TEXT_COLOR)
 
 # ADD SOLDIERS EVENT ID
 ADDSOLDIERS = pygame.USEREVENT + 1
@@ -36,7 +52,7 @@ ADDSOLDIERS = pygame.USEREVENT + 1
 factor = 1.5
 speed = 1.5
 
-def quit_game(event) -> bool:
+def quit_game(event: Event) -> bool:
   """
   Checks for the quit game condition.
 
@@ -48,11 +64,7 @@ def quit_game(event) -> bool:
   """
   return event.type == QUIT or event.type == KEYDOWN and event.key == K_ESCAPE
 
-towers: Group = Group()
-soldiers: Group = Group()
-all_sprites: Group = Group()
-
-def create_tower(towers: list[Tower]):
+def create_tower(towers: list[Tower]) -> None:
   towers.append(Tower(0, 0))
 
 def game_cycle() -> None:
@@ -60,6 +72,8 @@ def game_cycle() -> None:
 
   # Clean the screen
   screen.fill((21, 21, 21))
+
+  screen.blit(label, (100, 100))
 
   # Did the user click the window close button?
   for event in pygame.event.get():
@@ -76,9 +90,16 @@ def game_cycle() -> None:
 
   soldiers.update()
 
-  # Draw towers
+  # Draw all sprites
   for sprite in all_sprites:
     screen.blit(sprite.surf, sprite.rect)
+
+  # Check if any enemies have collided with the player
+  for tower in towers:
+    if pygame.sprite.spritecollideany(tower, soldiers):
+      # If so, then remove the player and stop the loop
+      tower.kill()
+      running = False
 
   # Flip the display
   pygame.display.flip()

@@ -34,6 +34,10 @@ poetry shell
 python -m rts
 ```
 
+## How to play
+
+Send soldiers from your towers to enemy towers to conquer them. You win if you can conquer all enemies towers.
+
 ## How to test
 
 ```
