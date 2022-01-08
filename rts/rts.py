@@ -18,7 +18,7 @@ from pygame.event import Event
 from pygame.sprite import Group
 from pygame.font import SysFont
 
-from rts.soldier import Soldier
+from rts.sprites.tower import Tower
 
 from .constants import (
   GAME_NAME,
@@ -30,8 +30,6 @@ from .constants import (
   SCREEN_WIDTH,
   SCREEN_HEIGHT
 )
-
-from .tower import Tower
 
 # Globals
 
@@ -115,11 +113,14 @@ def add_soldiers_to_towers() -> None:
   """Add soldiers to any tower.
 
   For any tower that can spawn soldiers, create one and spawn near it.
+
+  A tower could spawn a soldier if it has not reached the maximum limit.
   """
   for tower in towers:
-    soldier = Soldier(tower)
-    soldiers.add(soldier)
-    all_sprites.add(soldier)
+    soldier = tower.spawn_soldier()
+    if soldier is not None:
+      soldiers.add(soldier)
+      all_sprites.add(soldier)
 
 def init_game_view() -> None:
   """Init the game view.
