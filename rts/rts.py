@@ -80,7 +80,7 @@ def game_cycle() -> bool:
   # Clean the screen
   screen.fill((21, 21, 21))
 
-  screen.blit(label, (100, 100))
+  screen.blit(label, (80, 40))
 
   # Did the user click the window close button?
   for event in pygame.event.get():
