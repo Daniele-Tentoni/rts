@@ -67,7 +67,14 @@ def quit_game(event: Event) -> bool:
 def create_tower(towers: list[Tower]) -> None:
   towers.append(Tower(0, 0))
 
-def game_cycle() -> None:
+def game_cycle() -> bool:
+  """Run a single game cycle.
+
+  Run a single game cycle and return if the game as to be closed or not.
+
+  Returns:
+      bool: True if the game has to be closed, false otherwise.
+  """
   running = True
 
   # Clean the screen
@@ -124,6 +131,7 @@ def main():
 
   running = True
   while running:
+    # Continue to run the game until has to be closed.
     running = game_cycle()
 
   pygame.quit()
