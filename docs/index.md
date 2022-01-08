@@ -10,6 +10,6 @@ Work in progress.
 
 ## Players
 
-Connect towers to send soldiers. Defend allied towers. Conquer enemies towers.
+You are a ruler of some towers and you have to conquer your enemies.
 
-Made with [mkdocs.org](https://www.mkdocs.org).
+Navigate to [Players Section](players/index.md).
