@@ -36,7 +36,7 @@ from .tower import Tower
 # Globals
 
 pygame.font.init()
-sys_font = SysFont("Arial", 15)
+sys_font = SysFont("Arial", 14)
 
 towers: Group = Group()
 soldiers: Group = Group()
