@@ -80,7 +80,7 @@ def game_cycle() -> None:
     if quit_game(event):
       running = False
     elif event.type == ADDSOLDIERS:
-      soldier = Soldier()
+      soldier = Soldier(towers.sprites()[0])
       soldiers.add(soldier)
       all_sprites.add(soldier)
 

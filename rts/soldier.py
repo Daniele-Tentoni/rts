@@ -3,6 +3,8 @@ import random
 from pygame import Surface
 from pygame.sprite import Sprite
 
+from rts.tower import Tower
+
 from .constants import (
   LINK_COLOR,
   LINK_SIZE,
@@ -11,17 +13,36 @@ from .constants import (
 )
 
 class Soldier(Sprite):
-  def __init__(self) -> None:
+  tower: Tower
+
+  def __init__(self, tower_mother: Tower) -> None:
+    """
+    Create a new Soldier entity.
+
+    Args:
+        tower_mother (Tower): This is the mother tower, where the soldier has been generated.
+    """
+    if not tower_mother:
+      raise ValueError('tower_mother argument must be valued')
+
     super(Soldier, self).__init__()
+
+    self.tower = tower_mother
+
+    # Sprite stuff.
     self.surf = Surface(LINK_SIZE)
     self.surf.fill(LINK_COLOR)
-    self.rect = self.surf.get_rect(
-      center = (
-        random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), # Start outside the screen.
-        random.randint(0 + 5, SCREEN_HEIGHT - 5) # Start inside the screen.
+
+    random_x = random.randint(
+      self.tower.rect.centerx + 10,
+      self.tower.rect.centerx + 50
       )
-    )
-    self.speed = random.randint(1, 5)
+    random_y = random.randint(
+      self.tower.rect.centery + 10,
+      self.tower.rect.centery + 50
+      )
+    self.rect = self.surf.get_rect(center = (random_x, random_y))
+    self.speed = random.randint(1, 3)
 
   def update(self):
     """
@@ -31,6 +52,6 @@ class Soldier(Sprite):
     belongs, removing the reference to it as well. This allow garbage collector
     to reclaim the memory as necessary.
     """
-    self.rect.move_ip(-self.speed, 0)
+    # self.rect.move_ip(-self.speed / 2, 0)
     if self.rect.right < 0:
       self.kill() # Remove from screen and memory.
