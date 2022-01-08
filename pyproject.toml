@@ -7,6 +7,7 @@ authors = ["Daniele Tentoni <daniele.tentoni.1996@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 pygame = "^2.1.2"
+mkdocs = "^1.2.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"

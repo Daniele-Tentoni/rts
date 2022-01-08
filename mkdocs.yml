@@ -1,0 +1,7 @@
+site_name: RTS Docs
+site_url: https://rts.readthedocs.io/
+
+nav:
+  - Home: index.md
+
+theme: readthedocs
