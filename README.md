@@ -2,27 +2,18 @@
 
 Real time strategy project.
 
-Connect towers to send soldiers to another one. Win how can conquest all towers on the board. Connect to your friends or play online with other players from all around the world.
+Connect towers to send soldiers to another one. Win how can conquest all towers on the board. Connect to your friends or play online with other players from all around the world. For player guides, visit [RTS on Read The Docs](rts.readthedocs.io).
 
-Run `poetry install` to install dependencies.
+**Table of Contents**:
 
-## How to run
+- [How to install](#how-to-install)
+- [How to develop](#how-to-develop)
+- [How to test](#how-to-test)
+- [How to contribute](#how-to-contrinute)
 
-```
-# Install pyenv
-curl https://pyenv.run | bash
+## How to install
 
-# Print last versions of CPython
-pyenv update
-pyenv install --list | grep " 3\."
-
-# Install the last version
-pyenv install <last_version>
-
-# Install poetry
-curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-echo "export PATH=\"$HOME/.poetry/bin:$PATH\"" >> .bashrc
-
+```sh
 # Install deps
 poetry install
 
@@ -34,9 +25,39 @@ poetry shell
 python -m rts
 ```
 
-## How to play
+Important! The game is actively tested only on Ubuntu, let me know if work fine or not on other systems.
 
-Send soldiers from your towers to enemy towers to conquer them. You win if you can conquer all enemies towers.
+Run `poetry install` to install dependencies.
+
+## How to develop
+
+Necessary tools:
+
+- Pyenv:
+
+  ```
+  # Install pyenv
+  curl https://pyenv.run | bash
+
+  # Print last versions of CPython
+  pyenv update
+  pyenv install --list | grep " 3\."
+
+  # Install the last version
+  pyenv install <last_version>
+  ```
+
+- Poetry:
+  ````
+  # Install poetry
+  curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+  echo "export PATH=\"$HOME/.poetry/bin:$PATH\"" >> .bashrc
+  ```
+  ````
+
+Before continue, read about [how to contribute](#how-to-contribute).
+
+Now you can [run it](#how-to-install) or [test it](#how-to-test).
 
 ## How to test
 
