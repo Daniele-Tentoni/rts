@@ -87,9 +87,7 @@ def game_cycle() -> bool:
     if quit_game(event):
       running = False
     elif event.type == ADDSOLDIERS:
-      soldier = Soldier(towers.sprites()[0])
-      soldiers.add(soldier)
-      all_sprites.add(soldier)
+      add_soldiers_to_towers()
 
   pressed_keys = pygame.key.get_pressed()
   towers.update(pressed_keys)
@@ -113,7 +111,21 @@ def game_cycle() -> bool:
 
   return running
 
-def create_objects() -> None:
+def add_soldiers_to_towers() -> None:
+  """Add soldiers to any tower.
+
+  For any tower that can spawn soldiers, create one and spawn near it.
+  """
+  for tower in towers:
+    soldier = Soldier(tower)
+    soldiers.add(soldier)
+    all_sprites.add(soldier)
+
+def init_game_view() -> None:
+  """Init the game view.
+
+  Init the game view, adding players and their towers. Create events to spawn soldiers in each tower.
+  """
   # Init towers
   for t in range(0, 2):
     x: float = SCREEN_WIDTH / 3 * (t + 1)
@@ -122,12 +134,12 @@ def create_objects() -> None:
     towers.add(tower)
     all_sprites.add(tower)
 
-  pygame.time.set_timer(ADDSOLDIERS, 250)
+  pygame.time.set_timer(ADDSOLDIERS, 1000)
 
 def main():
   pygame.init()
 
-  create_objects()
+  init_game_view()
 
   running = True
   while running:
