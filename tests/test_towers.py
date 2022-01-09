@@ -25,9 +25,9 @@ def test_reach_maximum_soldiers(create_simple_tower: Tower):
   """
   for limits in limits_per_level:
     # Reach the maximum
-    for n in range(0, limits[1]):
+    for n in range(0, limits['max']):
       assert isinstance(create_simple_tower.spawn_soldier(), Soldier)
 
     # Assert the we can't spawn another soldier.
-    assert len(create_simple_tower.soldiers) is limits[1]
+    assert len(create_simple_tower.soldiers) is limits['max']
     assert create_simple_tower.spawn_soldier() is None

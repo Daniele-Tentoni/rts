@@ -9,6 +9,6 @@ def test_soldier_raise_init_ex():
     assert v_error.value == "tower_mother argument must be valued"
 
 def test_soldier_created_with_tower():
-  tower = Tower(0, 0)
-  soldier = Soldier(tower)
-  assert soldier.tower == tower
+  mother_tower = Tower(0, 0)
+  soldier = Soldier(mother_tower)
+  assert soldier.mother_tower == mother_tower
