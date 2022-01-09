@@ -21,7 +21,7 @@ from pygame.sprite import Group, Sprite
 
 # Array with soldiers limits per level for towers
 # First one is the minimum, the second one is the maximum.
-limits_per_level = [(0, 10)]
+limits_per_level = [{ 'min': 0, 'max': 10 }]
 
 class Tower(Sprite):
   """
@@ -33,12 +33,12 @@ class Tower(Sprite):
   soldiers: Group
 
   def __init__(self, x: float, y: float) -> None:
-    """Creates a new Tower instance.
+    """Creates a new Tower entity.
 
-    Create a new Tower instance with a surface and a rectangle.
+    Create a new Tower entity with a surface and a rectangle.
 
     Args:
-        x (float): initial position.
+        x (float): initial position
         y (float): initial position
     """
     super(Tower, self).__init__()
@@ -52,30 +52,25 @@ class Tower(Sprite):
     """
     Update the position of each soldier assigned to the tower.
     """
+    import rts.sprites.soldier
     for soldier in self.soldiers:
-      random_x = random.randint(
-        self.rect.centerx + 10,
-        self.rect.centerx + 50
-      )
-      random_y = random.randint(
-        self.rect.centery + 10,
-        self.rect.centery + 50
-      )
-      soldier.rect.move_ip(random_x, random_y)
-
-  def draw(self, screen: Surface) -> None:
-    """
-    Draw on given screen the tower surface.
-
-    Args:
-        screen (Surface): Screen Surface.
-    """
-    screen.blit(self.surf, self.rect) # (self.x, self.y)
+      if isinstance(soldier, rts.sprites.soldier.Soldier):
+        soldier.arrange()
 
   def spawn_soldier(self):
+    """Spawn a soldier near the tower.
+
+    Spawn a soldier near the tower, given her center coordinates. Then, add the
+    new sprite to soldier tower sprite group and return it.
+
+    Returns:
+      [rts.sprites.soldier.Soldier | None]: New Soldier created or None value
+        if the soldier was not created, like when the soldier limit is reach.
+    """
     import rts.sprites.soldier
 
-    if len(self.soldiers) < limits_per_level[self.level - 1][1]:
+    max_soldiers = limits_per_level[self.level - 1]['max']
+    if len(self.soldiers) < max_soldiers:
       new_soldier = rts.sprites.soldier.Soldier(self)
       self.soldiers.add(new_soldier)
       return new_soldier
