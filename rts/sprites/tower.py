@@ -1,3 +1,4 @@
+import random
 from typing import Sequence
 
 from rts.constants import (
@@ -47,37 +48,20 @@ class Tower(Sprite):
     self.rect.move_ip(x, y)
     self.soldiers = Group()
 
-  def update(self, pressed_keys: Sequence[bool]):
+  def update(self):
     """
-    Move the tower object by pressed keys event.
-    This only change coordinates of the object. Use draw to
-    report it on the screen.
-
-    Args:
-        pressed_keys (Sequence[bool]): events sequence.
+    Update the position of each soldier assigned to the tower.
     """
-    x, y = (0.0, 0.0) # Deltas
-    factor = 5
-    if pressed_keys[K_UP]:
-      y = -0.2 * factor
-    if pressed_keys[K_DOWN]:
-      y = 0.2 * factor
-    if pressed_keys[K_LEFT]:
-      x = -0.2 * factor
-    if pressed_keys[K_RIGHT]:
-      x = 0.2 * factor
-
-    self.rect.move_ip(x, y)
-
-    # Keep player on the screen
-    if self.rect.left < 0:
-      self.rect.left = 0
-    if self.rect.right > SCREEN_WIDTH:
-      self.rect.right = SCREEN_WIDTH
-    if self.rect.top <= 0:
-      self.rect.top = 0
-    if self.rect.bottom >= SCREEN_HEIGHT:
-      self.rect.bottom = SCREEN_HEIGHT
+    for soldier in self.soldiers:
+      random_x = random.randint(
+        self.rect.centerx + 10,
+        self.rect.centerx + 50
+      )
+      random_y = random.randint(
+        self.rect.centery + 10,
+        self.rect.centery + 50
+      )
+      soldier.rect.move_ip(random_x, random_y)
 
   def draw(self, screen: Surface) -> None:
     """
