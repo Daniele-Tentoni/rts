@@ -1,13 +1,11 @@
 import random
 
 from pygame import Surface
-from pygame.sprite import Sprite
+import pygame.sprite
 
 from rts.constants import (
-  LINK_COLOR,
-  LINK_SIZE,
-  SCREEN_WIDTH,
-  SCREEN_HEIGHT
+  SOLDIER_COLOR,
+  SOLDIER_SIZE,
 )
 
 import rts.sprites.tower
@@ -20,6 +18,8 @@ class Soldier(Sprite):
     """
     Create a new Soldier entity.
 
+    Create a new Tower entity with a surface and a rectangle.
+
     Args:
         mother_tower (Tower): This is the mother tower, where the soldier has been generated.
     """
@@ -28,22 +28,19 @@ class Soldier(Sprite):
 
     super(Soldier, self).__init__()
 
-    self.tower = mother_tower
-
     # Sprite stuff.
-    self.surf = Surface(LINK_SIZE)
-    self.surf.fill(LINK_COLOR)
+    self.surf = Surface(SOLDIER_SIZE)
+    self.surf.fill(SOLDIER_COLOR)
 
-    random_x = random.randint(
-      self.tower.rect.centerx + 10,
-      self.tower.rect.centerx + 50
-      )
-    random_y = random.randint(
-      self.tower.rect.centery + 10,
-      self.tower.rect.centery + 50
-      )
+    base_x = mother_tower.rect.centerx
+    base_y = mother_tower.rect.centery
+    random_x = random.randint(base_x + 10, base_x + 50)
+    random_y = random.randint(base_y + 10, base_y + 50)
     self.rect = self.surf.get_rect(center = (random_x, random_y))
-    self.speed = random.randint(1, 3)
+
+    self.speed = 0.5
+
+    self.mother_tower = mother_tower
 
   def update(self):
     """
@@ -55,4 +52,12 @@ class Soldier(Sprite):
     """
     # self.rect.move_ip(-self.speed / 2, 0)
     if self.rect.right < 0:
+      print(f"killed")
       self.kill() # Remove from screen and memory.
+
+  def arrange(self):
+    random_x = random.randint(-1, 1)
+    random_y = random.randint(-1, 1)
+    self.rect.move_ip((random_x, random_y))
+
+    # TODO: resolve any possible collision
