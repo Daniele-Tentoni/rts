@@ -88,7 +88,7 @@ def game_cycle() -> bool:
       add_soldiers_to_towers()
 
   pressed_keys = pygame.key.get_pressed()
-  towers.update(pressed_keys)
+  towers.update()
 
   soldiers.update()
 
