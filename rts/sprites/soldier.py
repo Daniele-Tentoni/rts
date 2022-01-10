@@ -57,16 +57,17 @@ class Soldier(pygame.sprite.Sprite):
       self.kill() # Remove from screen and memory.
 
   def arrange(self):
-    random_x = random.randint(-1, 1) * self.speed
-    random_y = random.randint(-1, 1) * self.speed
+    random_x = random.randint(-5, 5) * self.speed
+    random_y = random.randint(-5, 5) * self.speed
     self.rect.move_ip((random_x, random_y))
 
-    if self.rect.left < self.mother_tower.rect.left + SOLDIER_RADIUS_AROUND_TOWER:
-      self.rect.left = self.mother_tower.rect.left + SOLDIER_RADIUS_AROUND_TOWER
+    # Check max radius
+    if self.rect.left < self.mother_tower.rect.left - SOLDIER_RADIUS_AROUND_TOWER:
+      self.rect.left = self.mother_tower.rect.left - SOLDIER_RADIUS_AROUND_TOWER
     if self.rect.right > self.mother_tower.rect.right + SOLDIER_RADIUS_AROUND_TOWER:
       self.rect.right = self.mother_tower.rect.right + SOLDIER_RADIUS_AROUND_TOWER
-    if self.rect.top < self.mother_tower.rect.top + SOLDIER_RADIUS_AROUND_TOWER:
-      self.rect.top = self.mother_tower.rect.top + SOLDIER_RADIUS_AROUND_TOWER
+    if self.rect.top < self.mother_tower.rect.top - SOLDIER_RADIUS_AROUND_TOWER:
+      self.rect.top = self.mother_tower.rect.top - SOLDIER_RADIUS_AROUND_TOWER
     if self.rect.bottom > self.mother_tower.rect.bottom + SOLDIER_RADIUS_AROUND_TOWER:
       self.rect.bottom = self.mother_tower.rect.bottom + SOLDIER_RADIUS_AROUND_TOWER
 

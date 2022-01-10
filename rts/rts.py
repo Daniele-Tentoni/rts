@@ -67,7 +67,7 @@ class GameInstance:
     self.init_rulers()
     self.init_towers()
     pygame.time.set_timer(ADDSOLDIERS, 1000)
-    pygame.time.set_timer(UPDATESOLDIERS, 500)
+    pygame.time.set_timer(UPDATESOLDIERS, 100)
 
   def init_rulers(self) -> None:
     """Init rulers in this game instance.
