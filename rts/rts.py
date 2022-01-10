@@ -115,7 +115,6 @@ class GameInstance:
         if soldier is not None:
           self.add_sprite_to(soldier, self.soldiers)
           screen.blit(soldier.surf, soldier.rect)
-          print(f"sprites have {len(self.all_sprites)}")
 
   def game_cycle(self) -> bool:
     """Run a single game cycle.
