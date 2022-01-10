@@ -70,4 +70,4 @@ class Soldier(pygame.sprite.Sprite):
     if self.rect.bottom > self.mother_tower.rect.bottom + SOLDIER_RADIUS_AROUND_TOWER:
       self.rect.bottom = self.mother_tower.rect.bottom + SOLDIER_RADIUS_AROUND_TOWER
 
-    # TODO: resolve any possible collision
+    # TODO: resolve any possible collision with other soldiers and tower

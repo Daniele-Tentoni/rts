@@ -2,6 +2,7 @@
 
 import random
 import pygame
+import pygame.font
 
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
@@ -17,12 +18,13 @@ from pygame.locals import (
 )
 from pygame.event import Event
 from pygame.sprite import Group
-from pygame.font import SysFont
 
 import rts.sprites.tower
 import rts.sprites.ruler
 
 from .constants import (
+  FONT_NAME,
+  FONT_SIZE,
   GAME_NAME,
   PLAYERS_NUMBER,
   SCREEN_COLOR,
@@ -32,26 +34,24 @@ from .constants import (
 )
 
 # Globals
-
-pygame.font.init()
-sys_font = SysFont("Arial", 14)
-
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 pygame.display.set_caption(GAME_NAME)
-label = sys_font.render("Send soldiers from your tower to enemies ones to conquer them.", 1, TEXT_COLOR)
 
 # ADD SOLDIERS EVENT ID
 ADDSOLDIERS = pygame.USEREVENT + 1
+UPDATESOLDIERS = ADDSOLDIERS + 1
 
 factor = 1.5
 speed = 1.5
 
 class GameInstance:
+  all_sprites: Group
   current_ruler: rts.sprites.ruler.Ruler
   rulers: Group
-  towers: Group
   soldiers: Group
-  all_sprites: Group
+  towers: Group
+
+  sys_font: pygame.font.Font
 
   def __init__(self) -> None:
     """Init the game view.
@@ -63,9 +63,11 @@ class GameInstance:
     self.rulers = Group()
     self.soldiers = Group()
     self.towers = Group()
+    self.sys_font = pygame.font.SysFont(pygame.font.get_default_font(), FONT_SIZE)
     self.init_rulers()
     self.init_towers()
     pygame.time.set_timer(ADDSOLDIERS, 1000)
+    pygame.time.set_timer(UPDATESOLDIERS, 500)
 
   def init_rulers(self) -> None:
     """Init rulers in this game instance.
@@ -116,6 +118,11 @@ class GameInstance:
           self.add_sprite_to(soldier, self.soldiers)
           screen.blit(soldier.surf, soldier.rect)
 
+  def arrange_soldiers(self):
+    for tower in self.towers:
+      if isinstance(tower, rts.sprites.tower.Tower):
+        tower.arrange_soldiers()
+
   def game_cycle(self) -> bool:
     """Run a single game cycle.
 
@@ -126,34 +133,40 @@ class GameInstance:
     """
     running = True
 
-    # Clean the screen
+    # 1. Screen cleaning
     screen.fill(SCREEN_COLOR)
 
+    # 2. System label writing
+    label = self.sys_font.render("Send soldiers from your tower to enemies ones to conquer them.", 1, TEXT_COLOR)
     screen.blit(label, (80, 40))
-    soldiers_label = sys_font.render(f"Soldiers spawn {self.soldiers}.", 1, TEXT_COLOR)
+    soldiers_label = self.sys_font.render(f"Soldiers spawn {self.soldiers}.", 1, TEXT_COLOR)
     screen.blit(soldiers_label, (80, 80))
 
-    # Did the user click the window close button?
+    # 3. Events managing
     for event in pygame.event.get():
       if quit_game(event):
         running = False
       elif event.type == ADDSOLDIERS:
         self.add_soldiers_to_towers()
+      elif event.type == UPDATESOLDIERS:
+        self.arrange_soldiers()
 
+    # 4. Ruler updates
     pressed_keys = pygame.key.get_pressed()
     self.current_ruler.update(pressed_keys)
+
+    # 5. Tower updates
     self.towers.update()
 
+    # 6. Other soldiers updates
     self.soldiers.update()
 
-    # Draw all sprites
+    # 7. Blit all
     for sprite in self.all_sprites:
-      # if isinstance(sprite, Soldier):
-        # print(f"Soldier {sprite.rect}")
       screen.blit(sprite.surf, sprite.rect)
 
-    for soldier in self.soldiers:
-      screen.blit(soldier.surf, soldier.rect)
+    # for soldier in self.soldiers:
+      # screen.blit(soldier.surf, soldier.rect)
 
     # Check if any enemies have collided with the player
     # for tower in self.towers:
@@ -194,6 +207,7 @@ def main():
   Init pygame library, game view and start the game cycle.
   """
   pygame.init()
+  pygame.font.init()
 
   instance = GameInstance()
 
@@ -202,4 +216,5 @@ def main():
     # Continue to run the game until has to be closed.
     running = instance.game_cycle()
 
+  pygame.font.quit()
   pygame.quit()
