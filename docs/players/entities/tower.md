@@ -1,6 +1,8 @@
 # Tower
 
-Is a blank square in the map and is a part of your kingdom.
+Is a blank square in the map and is a part of your kingdom. You have a kingdom as long you have control at least one tower.
+
+Inside the blank square you can see the number of soldiers defending that tower.
 
 It generates 1 [Soldier](#soldier) per second up to 10. You control a tower as long as one of your soldier control it. If attackers soldiers kill all yours, you lose the tower control. If your soldiers kill all enemy ones, you take control of tower.
 
