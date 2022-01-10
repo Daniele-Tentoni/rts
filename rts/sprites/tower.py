@@ -62,13 +62,8 @@ class Tower(Sprite):
   def update(self):
     """Update tower and her soldiers.
 
-    Update the tower and the position of each soldier assigned to the tower.
+    Update the tower and the label of soldier assigned to the tower.
     """
-    import rts.sprites.soldier
-    for soldier in self.soldiers:
-      if isinstance(soldier, rts.sprites.soldier.Soldier):
-        soldier.arrange()
-
     if self.show_soldiers:
       self.update_soldiers_label()
 
