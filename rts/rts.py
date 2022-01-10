@@ -33,10 +33,6 @@ from .constants import (
   TEXT_COLOR,
 )
 
-# Globals
-screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-pygame.display.set_caption(GAME_NAME)
-
 # ADD SOLDIERS EVENT ID
 ADDSOLDIERS = pygame.USEREVENT + 1
 UPDATESOLDIERS = ADDSOLDIERS + 1
@@ -48,21 +44,25 @@ class GameInstance:
   all_sprites: Group
   current_ruler: rts.sprites.ruler.Ruler
   rulers: Group
-  soldiers: Group
   towers: Group
-
+  screen: pygame.Surface
+  soldiers: Group
   sys_font: pygame.font.Font
 
-  def __init__(self) -> None:
+  def __init__(self, screen: pygame.Surface) -> None:
     """Init the game view.
 
     Init the game instance, adding rulers and their towers. Create events to
     spawn soldiers in each tower.
+
+    Args:
+      screen (pygame.Surface): screen where game is displayed.
     """
     self.all_sprites = Group()
     self.rulers = Group()
-    self.soldiers = Group()
     self.towers = Group()
+    self.screen = screen
+    self.soldiers = Group()
     self.sys_font = pygame.font.SysFont(pygame.font.get_default_font(), FONT_SIZE)
     self.init_rulers()
     self.init_towers()
@@ -116,7 +116,7 @@ class GameInstance:
         soldier = tower.spawn_soldier()
         if soldier is not None:
           self.add_sprite_to(soldier, self.soldiers)
-          screen.blit(soldier.surf, soldier.rect)
+          self.screen.blit(soldier.surf, soldier.rect)
 
   def arrange_soldiers(self):
     for tower in self.towers:
@@ -134,13 +134,13 @@ class GameInstance:
     running = True
 
     # 1. Screen cleaning
-    screen.fill(SCREEN_COLOR)
+    self.screen.fill(SCREEN_COLOR)
 
     # 2. System label writing
     label = self.sys_font.render("Send soldiers from your tower to enemies ones to conquer them.", 1, TEXT_COLOR)
-    screen.blit(label, (80, 40))
+    self.screen.blit(label, (80, 40))
     soldiers_label = self.sys_font.render(f"Soldiers spawn {self.soldiers}.", 1, TEXT_COLOR)
-    screen.blit(soldiers_label, (80, 80))
+    self.screen.blit(soldiers_label, (80, 80))
 
     # 3. Events managing
     for event in pygame.event.get():
@@ -163,7 +163,7 @@ class GameInstance:
 
     # 7. Blit all
     for sprite in self.all_sprites:
-      screen.blit(sprite.surf, sprite.rect)
+      self.screen.blit(sprite.surf, sprite.rect)
 
     # for soldier in self.soldiers:
       # screen.blit(soldier.surf, soldier.rect)
@@ -209,7 +209,9 @@ def main():
   pygame.init()
   pygame.font.init()
 
-  instance = GameInstance()
+  pygame.display.set_caption(GAME_NAME)
+  screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+  instance = GameInstance(screen)
 
   running = True
   while running:
