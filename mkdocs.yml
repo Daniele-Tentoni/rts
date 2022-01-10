@@ -1,3 +1,10 @@
+edit_uri: "tree/main/docs"
+
+repo_name: RTS
+repo_url: https://github.com/Daniele-Tentoni/rts
+
+site_author: Daniele Tentoni <daniele.tentoni.1996@gmail.com>
+site_description: RTS Documentation site
 site_name: RTS Docs
 site_url: https://rts.readthedocs.io/
 
@@ -5,8 +12,9 @@ nav:
   - Home: "index.md"
   - "Player Guides":
       - "Players": "players/index.md"
-      - "Ruler": "players/ruler.md"
-      - "Tower": "players/tower.md"
+      - "Entities":
+          - "Ruler": "players/entities/ruler.md"
+          - "Tower": "players/entities/tower.md"
   - "Developer Guides":
       - "Developers": "developers/index.md"
 

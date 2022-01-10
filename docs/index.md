@@ -1,3 +1,10 @@
+---
+summary: The complete documentation site index.
+authors:
+  - Daniele Tentoni <daniele.tentoni.1996@gmail.com>
+date: 2022-01-10
+---
+
 # Real Time Strategy
 
 Real Time Strategy game project.
