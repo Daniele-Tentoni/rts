@@ -7,5 +7,7 @@ nav:
       - "Players": "players/index.md"
       - "Ruler": "players/ruler.md"
       - "Tower": "players/tower.md"
+  - "Developer Guides":
+      - "Developers": "developers/index.md"
 
 theme: readthedocs
