@@ -33,4 +33,4 @@ jobs:
         env:
           SDL_VIDEODRIVER: "dummy"
           SDL_AUDIODRIVER: "disk"
-        run: poetry run python -m pytest tests/
+        run: poetry run python -m pytest --duration=3 tests/
