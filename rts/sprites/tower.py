@@ -82,7 +82,6 @@ class Tower(Sprite):
     )
     textrect = self.soldiers_label.get_rect(center = self.surf.get_rect().center)
     self.surf.blit(self.soldiers_label, textrect)
-    print(f"Update soldiers")
 
   def arrange_soldiers(self):
     import rts.sprites.soldier
