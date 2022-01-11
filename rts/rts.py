@@ -125,7 +125,7 @@ class GameInstance:
           self.add_sprite_to(soldier, self.soldiers)
           self.screen.blit(soldier.surf, soldier.rect)
 
-  def arrange_soldiers(self):
+  def arrange_soldiers(self) -> None:
     for tower in self.towers:
       if isinstance(tower, rts.sprites.tower.Tower):
         tower.arrange_soldiers()
