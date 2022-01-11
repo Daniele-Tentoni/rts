@@ -44,26 +44,33 @@ class GameInstance:
   all_sprites: Group
   current_ruler: rts.sprites.ruler.Ruler
   rulers: Group
-  towers: Group
   screen: pygame.Surface
   soldiers: Group
   sys_font: pygame.font.Font
+  towers: Group
 
-  def __init__(self, screen: pygame.Surface) -> None:
+  def __init__(self, screen: pygame.Surface, npc: int = 1) -> None:
     """Init the game view.
 
     Init the game instance, adding rulers and their towers. Create events to
     spawn soldiers in each tower.
 
+    Creating game instance without giving the number of non playable characters
+    to the constructor means that we want to generate a game with only 2
+    players: one for the current user, one for the computer.
+
     Args:
       screen (pygame.Surface): screen where game is displayed.
+      npc (int): number of non playable characters.
     """
     self.all_sprites = Group()
+    self.npc = npc
     self.rulers = Group()
-    self.towers = Group()
     self.screen = screen
     self.soldiers = Group()
     self.sys_font = pygame.font.SysFont(pygame.font.get_default_font(), FONT_SIZE)
+    self.towers = Group()
+
     self.init_rulers()
     self.init_towers()
     pygame.time.set_timer(ADDSOLDIERS, 1000)
@@ -85,7 +92,7 @@ class GameInstance:
     self.all_sprites.add(self.current_ruler)
 
     # Create ruler for each enemy player
-    for n in range(0, PLAYERS_NUMBER - 1):
+    for n in range(0, self.npc):
       new_ruler = rts.sprites.ruler.Ruler(
         random.randint(0, SCREEN_WIDTH),
         random.randint(0, SCREEN_HEIGHT)
