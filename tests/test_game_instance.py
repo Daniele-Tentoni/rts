@@ -3,6 +3,7 @@ import pygame.sprite
 import pytest
 
 from rts.rts import GameInstance
+from rts.sprites.ruler import Ruler
 
 @pytest.fixture
 def sample_game_instance() -> GameInstance:
@@ -17,7 +18,7 @@ def test_add_sprite_to_group(sample_game_instance: GameInstance):
   added to GameInstance.all_sprites group too.
 
   Args:
-    sample_game_instance (GameInstance): sample GameInstance.
+    sample_game_instance (GameInstance): sample Game Instance.
   """
   test_sprite: pygame.sprite.Sprite = pygame.sprite.Sprite()
   test_group = pygame.sprite.Group()
@@ -25,3 +26,29 @@ def test_add_sprite_to_group(sample_game_instance: GameInstance):
   assert test_group.has(test_sprite)
   sample_game_instance.add_sprite_to(test_sprite, sample_game_instance.towers)
   assert sample_game_instance.all_sprites.has(test_sprite)
+
+def test_simple_init_rulers(sample_game_instance: GameInstance):
+  """Test Rulers in Game Instance without npc number.
+
+  The number of rulers expected is 2: one player and one npc.
+
+  Args:
+      sample_game_instance (GameInstance): sample Game Instance.
+  """
+  assert isinstance(sample_game_instance.current_ruler, Ruler)
+  assert sample_game_instance.npc == 1
+  assert len(sample_game_instance.rulers) == 2
+
+supported_number_of_npc_at_once: int = 3
+@pytest.mark.parametrize("npc", range(0, supported_number_of_npc_at_once))
+def test_more_init_rulers(npc):
+  """Test Rulers initialized by Game Instance giving npc number.
+
+  Given npc number, we want n + 1 rulers in game instance.
+
+  Test that we can support up to 4 players at once.
+  """
+  instance = GameInstance(pygame.Surface((0, 0)), npc)
+  assert isinstance(instance.current_ruler, Ruler)
+  assert instance.npc == npc
+  assert len(instance.rulers) == npc + 1
