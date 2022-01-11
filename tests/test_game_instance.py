@@ -52,3 +52,16 @@ def test_more_init_rulers(npc):
   assert isinstance(instance.current_ruler, Ruler)
   assert instance.npc == npc
   assert len(instance.rulers) == npc + 1
+
+def test_arrange_soldiers(sample_game_instance: GameInstance):
+  sample_game_instance.add_soldiers_to_towers()
+  assert len(sample_game_instance.towers) == 2
+  assert len(sample_game_instance.soldiers) == 2
+  old_pos = [(x.rect.center) for x in sample_game_instance.soldiers]
+  mid_pos = [(x.rect.center) for x in sample_game_instance.soldiers]
+  for x in range(0, len(old_pos)):
+    assert old_pos[x] == mid_pos[x]
+  sample_game_instance.arrange_soldiers()
+  new_pos = [(x.rect.center) for x in sample_game_instance.soldiers]
+  for x in range(0, len(old_pos)):
+    assert old_pos[x] != new_pos[x]
