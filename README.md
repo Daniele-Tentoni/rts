@@ -61,13 +61,25 @@ Now you can [run it](#how-to-install) or [test it](#how-to-test).
 
 ## How to test
 
+Use as usual following commands to run pytest test suites:
+
 ```
-poetry run python -m pytest -v tests/ # outside the venv
+poetry run python -m pytest <options> # outside the venv
 
 # or
 
-python -m pytest -v tests/ # inside the venv
+python -m pytest <options> # inside the venv
 ```
+
+### Often used options
+
+Use `-v` to get verbose output.
+
+Use `--duration=n` to report the n-th long running tests.
+
+Use `--cov=rts` to measure the code coverage.
+
+Use `--cov-report term-missing:skip-covered --cov=rts` to report missing covered lines without showing full covered files.
 
 Tests are executed remotely only for pull_requests. Runs them before commit and push changes. Pre commit hooks will be added to the project in near future.
 
@@ -75,7 +87,7 @@ Tests are executed remotely only for pull_requests. Runs them before commit and 
 
 Any contribute is appreciated. Fork the repo and open pull request or open issue for any advice.
 
-I'm opening to both bug fixing or new feature requests. If you have a **Major Feature**, first open and outline your proposal so that it can be discussed; if you have a **Minor Feature**, you can open directly a pull request. Adding a new test case is always appreciated.
+I'm opening to both bug fixing or new feature requests. If you have a **Major Feature**, first open and outline your proposal so that it can be discussed; if you have a **Minor Feature**, you can open directly a pull request. Adding new test cases is always appreciated.
 
 ### Coding Rules
 
