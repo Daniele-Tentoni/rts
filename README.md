@@ -4,6 +4,8 @@ Real time strategy project.
 
 Connect towers to send soldiers to another one. Win how can conquest all towers on the board. Connect to your friends or play online with other players from all around the world. For player guides, visit [RTS on Read The Docs](https://rts.readthedocs.io).
 
+[![codecov](https://codecov.io/gh/Daniele-Tentoni/rts/branch/main/graph/badge.svg?token=X4MJBG8D8X)](https://codecov.io/gh/Daniele-Tentoni/rts)
+
 **Table of Contents**:
 
 - [How to install](#how-to-install)
