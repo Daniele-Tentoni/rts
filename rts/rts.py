@@ -43,6 +43,7 @@ speed = 1.5
 class GameInstance:
   all_sprites: Group
   current_ruler: rts.sprites.ruler.Ruler
+  routes: list[tuple[tuple[int, int], tuple[int, int]]]
   rulers: Group
   screen: pygame.Surface
   soldiers: Group
@@ -66,6 +67,7 @@ class GameInstance:
     """
     self.all_sprites = Group()
     self.npc = npc
+    self.routes = list()
     self.rulers = Group()
     self.screen = screen
     self.soldiers = Group()
@@ -179,6 +181,9 @@ class GameInstance:
       state_label = self.sys_font.render(state_string, 1, TEXT_COLOR)
       self.screen.blit(state_label, (80, 80))
 
+    for route in self.routes:
+      pygame.draw.line(self.screen, TEXT_COLOR, route[0], route[1])
+
     # 6. Other soldiers updates
     self.soldiers.update()
 
@@ -219,12 +224,23 @@ class GameInstance:
   def start_trace(self) -> rts.sprites.tower.Tower:
     pos = pygame.mouse.get_pos()
     for tower in self.towers:
-      if tower.rect.right > pos[0] > tower.rect.left and tower.rect.bottom > pos[1] > tower.rect.top:
+      if tower_clicked(tower, pos):
         return tower
     return None
 
   def stop_trace(self) -> None:
-    pass
+    pos = pygame.mouse.get_pos()
+    remaining_towers = (t for t in self.towers if t is not self.tower_traced)
+    for tower in remaining_towers:
+      if tower_clicked(tower, pos):
+        future_tuple = (self.tower_traced.rect.center, tower.rect.center)
+        # TODO: Change the type to set instead of list? Performance improvement?
+        if future_tuple not in self.routes:
+          print("link")
+          self.routes.append(future_tuple)
+
+def tower_clicked(tower, mouse) -> bool:
+  return tower.rect.right > mouse[0] > tower.rect.left and tower.rect.bottom > mouse[1] > tower.rect.top
 
 def quit_game(event: Event) -> bool:
   """
