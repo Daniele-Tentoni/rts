@@ -47,8 +47,8 @@ class GameInstance:
   screen: pygame.Surface
   soldiers: Group
   sys_font: pygame.font.Font
+  tower_traced: rts.sprites.tower.Tower
   towers: Group
-  tracing: bool
 
   def __init__(self, screen: pygame.Surface, npc: int = 1) -> None:
     """Init the game view.
@@ -70,8 +70,8 @@ class GameInstance:
     self.screen = screen
     self.soldiers = Group()
     self.sys_font = pygame.font.SysFont(pygame.font.get_default_font(), FONT_SIZE)
+    self.tower_traced = None
     self.towers = Group()
-    self.tracing = False
 
     self.init_rulers()
     self.init_towers()
@@ -148,8 +148,6 @@ class GameInstance:
     # 2. System label writing
     label = self.sys_font.render("Send soldiers from your tower to enemies ones to conquer them.", 1, TEXT_COLOR)
     self.screen.blit(label, (80, 40))
-    soldiers_label = self.sys_font.render(f"Soldiers spawn {self.soldiers}.", 1, TEXT_COLOR)
-    self.screen.blit(soldiers_label, (80, 80))
 
     # 3. Events managing
     for event in pygame.event.get():
@@ -159,12 +157,11 @@ class GameInstance:
         self.add_soldiers_to_towers()
       elif event.type == UPDATESOLDIERS:
         self.arrange_soldiers()
-      elif event.type == pygame.MOUSEBUTTONUP and pygame.mouse.get_pressed() == (0, 0, 0) and self.tracing:
-        self.tracing = False
-        print("Tracing is aborted")
-      elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed() == (1, 0, 0) and not self.tracing:
-        self.tracing = True
-        print("Tracing is activated")
+      elif self.has_to_un_trace(event):
+        self.stop_trace()
+        self.tower_traced = None
+      elif self.has_to_trace(event):
+        self.tower_traced = self.start_trace()
 
     # 4. Ruler updates
     pressed_keys = pygame.key.get_pressed()
@@ -172,6 +169,12 @@ class GameInstance:
 
     # 5. Tower updates
     self.towers.update()
+
+    # 5b. Route updates
+    if self.tower_traced is not None:
+      state_string = f"Tower click {self.tower_traced.rect.right}."
+      state_label = self.sys_font.render(state_string, 1, TEXT_COLOR)
+      self.screen.blit(state_label, (80, 80))
 
     # 6. Other soldiers updates
     self.soldiers.update()
@@ -203,6 +206,22 @@ class GameInstance:
     ):
     group.add(sprite)
     self.all_sprites.add(sprite)
+
+  def has_to_un_trace(self, event: pygame.event.Event) -> bool:
+    return event.type == pygame.MOUSEBUTTONUP and pygame.mouse.get_pressed() == (0, 0, 0) and self.tower_traced is not None
+
+  def has_to_trace(self, event: pygame.event.Event) -> bool:
+    return event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed() == (1, 0, 0) and self.tower_traced is None
+
+  def start_trace(self) -> rts.sprites.tower.Tower:
+    pos = pygame.mouse.get_pos()
+    for tower in self.towers:
+      if tower.rect.right > pos[0] > tower.rect.left and tower.rect.bottom > pos[1] > tower.rect.top:
+        return tower
+    return None
+
+  def stop_trace(self) -> None:
+    pass
 
 def quit_game(event: Event) -> bool:
   """
