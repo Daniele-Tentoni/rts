@@ -172,6 +172,9 @@ class GameInstance:
 
     # 5b. Route updates
     if self.tower_traced is not None:
+      tower_pos = self.tower_traced.rect.center
+      mouse_pos = pygame.mouse.get_pos()
+      pygame.draw.line(self.screen, TEXT_COLOR, tower_pos, mouse_pos)
       state_string = f"Tower click {self.tower_traced.rect.right}."
       state_label = self.sys_font.render(state_string, 1, TEXT_COLOR)
       self.screen.blit(state_label, (80, 80))
