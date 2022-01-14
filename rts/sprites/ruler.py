@@ -1,9 +1,13 @@
 import pygame
 from pygame.constants import (
+  K_a,
+  K_d,
   K_DOWN,
   K_LEFT,
   K_RIGHT,
+  K_s,
   K_UP,
+  K_w,
 )
 from typing import Sequence
 
@@ -46,13 +50,13 @@ class Ruler(pygame.sprite.Sprite):
       pressed_keys (Sequence[bool]): events sequence.
     """
     x, y = (0.0, 0.0)
-    if pressed_keys[K_UP]:
+    if pressed_keys[K_UP] or pressed_keys[K_w]:
       y = -1 * self.speed
-    if pressed_keys[K_DOWN]:
+    if pressed_keys[K_DOWN] or pressed_keys[K_s]:
       y = 1 * self.speed
-    if pressed_keys[K_LEFT]:
+    if pressed_keys[K_LEFT] or pressed_keys[K_a]:
       x = -1 * self.speed
-    if pressed_keys[K_RIGHT]:
+    if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
       x = 1 * self.speed
 
     self.rect.move_ip(x, y)
