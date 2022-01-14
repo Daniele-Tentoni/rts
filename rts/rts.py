@@ -48,6 +48,7 @@ class GameInstance:
   soldiers: Group
   sys_font: pygame.font.Font
   towers: Group
+  tracing: bool
 
   def __init__(self, screen: pygame.Surface, npc: int = 1) -> None:
     """Init the game view.
@@ -70,6 +71,7 @@ class GameInstance:
     self.soldiers = Group()
     self.sys_font = pygame.font.SysFont(pygame.font.get_default_font(), FONT_SIZE)
     self.towers = Group()
+    self.tracing = False
 
     self.init_rulers()
     self.init_towers()
@@ -157,6 +159,12 @@ class GameInstance:
         self.add_soldiers_to_towers()
       elif event.type == UPDATESOLDIERS:
         self.arrange_soldiers()
+      elif event.type == pygame.MOUSEBUTTONUP and pygame.mouse.get_pressed() == (0, 0, 0) and self.tracing:
+        self.tracing = False
+        print("Tracing is aborted")
+      elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed() == (1, 0, 0) and not self.tracing:
+        self.tracing = True
+        print("Tracing is activated")
 
     # 4. Ruler updates
     pressed_keys = pygame.key.get_pressed()
