@@ -2,7 +2,7 @@
 
 In this section is explain the entire game for players. Rules are really simple.
 
-![Game Screen](/img/game_screen.png)
+![Game Demo](../img/demo_20220114.gif)
 
 _Above: An early game screen example_
 
@@ -48,3 +48,5 @@ Is a blank square in the map and is a part of your kingdom. Read more on [Tower 
 ### Route
 
 A route is created as a link between two towers. Using it, soldiers can go from one tower to another one to attack or protect it. A route can be used from both sides, so pay attention before creating one: you can use that route, but enemies can do the same!
+
+You can create a Route by click on one of towers controlled by you and clicking on another one. If you dislike the path you created, you can click with right mouse button to abort the command and cancel the route creation.
