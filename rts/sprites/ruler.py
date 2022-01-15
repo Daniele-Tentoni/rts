@@ -50,13 +50,13 @@ class Ruler(pygame.sprite.Sprite):
       pressed_keys (Sequence[bool]): events sequence.
     """
     x, y = (0.0, 0.0)
-    if pressed_keys[K_UP] or pressed_keys[K_w]:
+    if K_UP in pressed_keys and pressed_keys[K_UP] or K_w in pressed_keys and pressed_keys[K_w]:
       y = -1 * self.speed
-    if pressed_keys[K_DOWN] or pressed_keys[K_s]:
+    if K_DOWN in pressed_keys and pressed_keys[K_DOWN] or K_s in pressed_keys and pressed_keys[K_s]:
       y = 1 * self.speed
-    if pressed_keys[K_LEFT] or pressed_keys[K_a]:
+    if K_LEFT in pressed_keys and pressed_keys[K_LEFT] or K_a in pressed_keys and pressed_keys[K_a]:
       x = -1 * self.speed
-    if pressed_keys[K_RIGHT] or pressed_keys[K_d]:
+    if K_RIGHT in pressed_keys and pressed_keys[K_RIGHT] or K_d in pressed_keys and pressed_keys[K_d]:
       x = 1 * self.speed
 
     self.rect.move_ip(x, y)
