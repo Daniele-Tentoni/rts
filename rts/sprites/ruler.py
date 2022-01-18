@@ -29,7 +29,8 @@ class Ruler(pygame.sprite.Sprite):
     """
     Creates a new Ruler instance.
 
-    Create a new Ruler instance with a surface and a rectangle.
+    Create a new Ruler instance with a surface and a rectangle. If given
+    starting position make sprite exceed the screen, it will move in.
 
     Args:
       x (float): initial horizontal position.
@@ -39,7 +40,7 @@ class Ruler(pygame.sprite.Sprite):
     self.surf = pygame.Surface(rts.constants.RULER_SIZE)
     self.surf.fill(rts.constants.RULER_COLOR)
     self.rect = self.surf.get_rect()
-    self.rect.move_ip(x, y)
+    self.move_in_the_screen(x, y)
     self.speed = 1
 
   def update(self, pressed_keys: Sequence[bool]):
@@ -50,15 +51,22 @@ class Ruler(pygame.sprite.Sprite):
       pressed_keys (Sequence[bool]): events sequence.
     """
     x, y = (0.0, 0.0)
-    if K_UP in pressed_keys and pressed_keys[K_UP] or K_w in pressed_keys and pressed_keys[K_w]:
+    if K_UP in pressed_keys and pressed_keys[K_UP] or \
+       K_w  in pressed_keys and pressed_keys[K_w]:
       y = -1 * self.speed
-    if K_DOWN in pressed_keys and pressed_keys[K_DOWN] or K_s in pressed_keys and pressed_keys[K_s]:
+    if K_DOWN in pressed_keys and pressed_keys[K_DOWN] or \
+       K_s    in pressed_keys and pressed_keys[K_s]:
       y = 1 * self.speed
-    if K_LEFT in pressed_keys and pressed_keys[K_LEFT] or K_a in pressed_keys and pressed_keys[K_a]:
+    if K_LEFT in pressed_keys and pressed_keys[K_LEFT] or \
+       K_a    in pressed_keys and pressed_keys[K_a]:
       x = -1 * self.speed
-    if K_RIGHT in pressed_keys and pressed_keys[K_RIGHT] or K_d in pressed_keys and pressed_keys[K_d]:
+    if K_RIGHT in pressed_keys and pressed_keys[K_RIGHT] or \
+       K_d     in pressed_keys and pressed_keys[K_d]:
       x = 1 * self.speed
 
+    self.move_in_the_screen(x, y)
+
+  def move_in_the_screen(self, x: float, y: float):
     self.rect.move_ip(x, y)
 
     # Keep player on the screen
