@@ -11,6 +11,7 @@ Connect towers to send soldiers to another one. Win how can conquest all towers 
 - [How to install](#how-to-install)
 - [How to play](#how-to-play)
 - [How to contribute](#how-to-contribute)
+  - [Features or Issues](#features-or-issues)
 
 ## How to install
 
@@ -37,3 +38,7 @@ Follow [Developers Guidelines](https://rts.readthedocs.io/en/latest/developers/)
 ## How to contribute
 
 Follow [Developers Guidelines](https://rts.readthedocs.io/en/latest/developers/) in the official documentation.
+
+### Features or Issues
+
+You can propose features or report issues. [Click here](https://github.com/Daniele-Tentoni/rts/issues/new) to start now!
