@@ -11,7 +11,7 @@ from pygame.constants import (
 )
 from typing import Sequence
 
-import rts.constants
+import rts.config
 
 class Ruler(pygame.sprite.Sprite):
   """
@@ -37,8 +37,8 @@ class Ruler(pygame.sprite.Sprite):
       y (float): initial vertical position.
     """
     super(Ruler, self).__init__()
-    self.surf = pygame.Surface(rts.constants.RULER_SIZE)
-    self.surf.fill(rts.constants.RULER_COLOR)
+    self.surf = pygame.Surface(rts.config.RULER_SIZE)
+    self.surf.fill(rts.config.RULER_COLOR)
     self.rect = self.surf.get_rect()
     self.move_in_the_screen(x, y)
     self.speed = 1
@@ -72,12 +72,12 @@ class Ruler(pygame.sprite.Sprite):
     # Keep player on the screen
     if self.rect.left < 0:
       self.rect.left = 0
-    if self.rect.right > rts.constants.SCREEN_WIDTH:
-      self.rect.right = rts.constants.SCREEN_WIDTH
+    if self.rect.right > rts.config.SCREEN_WIDTH:
+      self.rect.right = rts.config.SCREEN_WIDTH
     if self.rect.top <= 0:
       self.rect.top = 0
-    if self.rect.bottom >= rts.constants.SCREEN_HEIGHT:
-      self.rect.bottom = rts.constants.SCREEN_HEIGHT
+    if self.rect.bottom >= rts.config.SCREEN_HEIGHT:
+      self.rect.bottom = rts.config.SCREEN_HEIGHT
 
   def draw(self, screen: pygame.Surface) -> None:
     """

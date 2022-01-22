@@ -1,7 +1,7 @@
 import random
 from typing import Sequence
 
-from rts.constants import (
+from rts.config import (
   FONT_NAME,
   FONT_SIZE,
   TEXT_COLOR,
