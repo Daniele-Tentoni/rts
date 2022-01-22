@@ -70,5 +70,15 @@ class Soldier(pygame.sprite.Sprite):
       self.rect.top = self.mother_tower.rect.top - SOLDIER_RADIUS_AROUND_TOWER
     if self.rect.bottom > self.mother_tower.rect.bottom + SOLDIER_RADIUS_AROUND_TOWER:
       self.rect.bottom = self.mother_tower.rect.bottom + SOLDIER_RADIUS_AROUND_TOWER
-
     # TODO: resolve any possible collision with other soldiers and tower
+
+  def move_to(self, another_tower):
+    """Move to another tower instead of arrange.
+
+    Each time this method is called, the soldier move to the target position by
+    a small step. When the destination is reached, check if it has to explode
+    (due to enemy tower reached) or defend it (allied tower reached).
+
+    Args:
+        another_tower ([type]): tower to reach.
+    """
