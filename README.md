@@ -9,9 +9,8 @@ Connect towers to send soldiers to another one. Win how can conquest all towers 
 **Table of Contents**:
 
 - [How to install](#how-to-install)
-- [How to develop](#how-to-develop)
-- [How to test](#how-to-test)
-- [How to contribute](#how-to-contrinute)
+- [How to play](#how-to-play)
+- [How to contribute](#how-to-contribute)
 
 ## How to install
 
@@ -31,76 +30,10 @@ Important! The game is actively tested only on Ubuntu, let me know if work fine 
 
 Run `poetry install` to install dependencies.
 
-## How to develop
+## How to play
 
-Necessary tools:
-
-- Pyenv:
-
-  ```
-  # Install pyenv
-  curl https://pyenv.run | bash
-
-  # Print last versions of CPython
-  pyenv update
-  pyenv install --list | grep " 3\."
-
-  # Install the last version
-  pyenv install <last_version>
-  ```
-
-- Poetry:
-  ````
-  # Install poetry
-  curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-  echo "export PATH=\"$HOME/.poetry/bin:$PATH\"" >> .bashrc
-  ```
-  ````
-
-Before continue, read about [how to contribute](#how-to-contribute).
-
-Now you can [run it](#how-to-install) or [test it](#how-to-test).
-
-## How to test
-
-Use as usual following commands to run pytest test suites:
-
-```
-poetry run python -m pytest <options> # outside the venv
-
-# or
-
-python -m pytest <options> # inside the venv
-```
-
-### Often used options
-
-Use `-v` to get verbose output.
-
-Use `--duration=n` to report the n-th long running tests.
-
-Use `--cov=rts` to measure the code coverage.
-
-Use `--cov-report term-missing:skip-covered --cov=rts` to report missing covered lines without showing full covered files.
-
-Tests are executed remotely only for pull_requests. Runs them before commit and push changes. Pre commit hooks will be added to the project in near future.
+Follow [Developers Guidelines](https://rts.readthedocs.io/en/latest/developers/) in the official documentation.
 
 ## How to contribute
 
-Any contribute is appreciated. Fork the repo and open pull request or open issue for any advice.
-
-I'm opening to both bug fixing or new feature requests. If you have a **Major Feature**, first open and outline your proposal so that it can be discussed; if you have a **Minor Feature**, you can open directly a pull request. Adding new test cases is always appreciated.
-
-### Coding Rules
-
-To ensure consistency throughout the source code, keep these rules in mind as you are working:
-
-- All features or bug fixes must be tested by one or more specs (unit-tests);
-- All public API methods from the game core must be documented;
-- Follow as much as possible formatting given by automated formatter (to be added).
-
-### Commit Message Format
-
-Follow as much as possible the indication given in [this document from Angular](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-format) for Semantic Version Commit Message Format.
-
-In the future, we will identify some specific scope for this project to use in commit's headers.
+Follow [Developers Guidelines](https://rts.readthedocs.io/en/latest/developers/) in the official documentation.
