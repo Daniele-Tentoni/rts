@@ -17,7 +17,7 @@ from pygame.constants import (
 )
 import pytest
 
-import rts.constants
+import rts.config
 from rts.sprites.ruler import Ruler
 
 @pytest.fixture
@@ -28,8 +28,8 @@ def top_left_ruler() -> tuple[Ruler, pygame.rect.Rect]:
 
 @pytest.fixture
 def bottom_right_ruler() -> tuple[Ruler, pygame.rect.Rect]:
-  x = rts.constants.SCREEN_WIDTH - rts.constants.RULER_WIDTH - 2
-  y = rts.constants.SCREEN_HEIGHT - rts.constants.RULER_HEIGHT - 2
+  x = rts.config.SCREEN_WIDTH - rts.config.RULER_WIDTH - 2
+  y = rts.config.SCREEN_HEIGHT - rts.config.RULER_HEIGHT - 2
   ruler = Ruler(x, y)
   rect = copy.deepcopy(ruler.rect)
   return (ruler, rect)
@@ -37,9 +37,9 @@ def bottom_right_ruler() -> tuple[Ruler, pygame.rect.Rect]:
 @pytest.mark.parametrize(
   "moves, expected", 
   [
-    (1, rts.constants.SCREEN_WIDTH - 1), 
-    (2, rts.constants.SCREEN_WIDTH),
-    (3, rts.constants.SCREEN_WIDTH),
+    (1, rts.config.SCREEN_WIDTH - 1), 
+    (2, rts.config.SCREEN_WIDTH),
+    (3, rts.config.SCREEN_WIDTH),
   ]
 )
 @pytest.mark.parametrize("keys", [{ K_RIGHT: True }, { K_d: True }])
@@ -100,9 +100,9 @@ def test_upper_vertical_movement(
 @pytest.mark.parametrize(
   "moves, expected", 
   [
-    (1, rts.constants.SCREEN_HEIGHT - 1), 
-    (2, rts.constants.SCREEN_HEIGHT),
-    (3, rts.constants.SCREEN_HEIGHT),
+    (1, rts.config.SCREEN_HEIGHT - 1), 
+    (2, rts.config.SCREEN_HEIGHT),
+    (3, rts.config.SCREEN_HEIGHT),
   ]
 )
 @pytest.mark.parametrize("keys", [{ K_DOWN: True }, { K_s: True }])

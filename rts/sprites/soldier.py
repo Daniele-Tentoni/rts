@@ -3,7 +3,7 @@ import random
 from pygame import Surface
 import pygame.sprite
 
-from rts.constants import (
+from rts.config import (
   SOLDIER_COLOR,
   SOLDIER_RADIUS_AROUND_TOWER,
   SOLDIER_SIZE,

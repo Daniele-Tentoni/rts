@@ -22,7 +22,7 @@ from pygame.sprite import Group
 import rts.sprites.tower
 import rts.sprites.ruler
 
-from .constants import (
+from .config import (
   FONT_NAME,
   FONT_SIZE,
   GAME_NAME,
