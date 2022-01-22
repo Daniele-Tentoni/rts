@@ -1,6 +1,7 @@
 import pygame
 import pygame.sprite
 import pytest
+from rts.config import PLAYERS_NUMBER, SCREEN_HEIGHT, SCREEN_WIDTH
 
 from rts.rts import GameInstance
 from rts.sprites.ruler import Ruler
@@ -55,8 +56,8 @@ def test_more_init_rulers(npc):
 
 def test_arrange_soldiers(sample_game_instance: GameInstance):
   sample_game_instance.add_soldiers_to_towers()
-  assert len(sample_game_instance.towers) == 2
-  assert len(sample_game_instance.soldiers) == 2
+  assert PLAYERS_NUMBER * 2 + 1 == len(sample_game_instance.towers)
+  assert PLAYERS_NUMBER * 2 + 1 == len(sample_game_instance.soldiers)
   old_pos = [(x.rect.center) for x in sample_game_instance.soldiers]
   mid_pos = [(x.rect.center) for x in sample_game_instance.soldiers]
   for x in range(0, len(old_pos)):
@@ -65,3 +66,19 @@ def test_arrange_soldiers(sample_game_instance: GameInstance):
   new_pos = [(x.rect.center) for x in sample_game_instance.soldiers]
   for x in range(0, len(old_pos)):
     assert old_pos[x] != new_pos[x]
+
+def test_spawn_tower_in_random_position(
+  sample_game_instance: GameInstance
+):
+  """Towers has to spawn randomly inside the screen.
+
+  Assert towers spawned inside the screen without overlapping.
+  """
+  ts = sample_game_instance.towers
+  assert PLAYERS_NUMBER * 2 + 1 == len(ts)
+  for t in ts:
+    assert t.rect.bottom < SCREEN_HEIGHT
+    assert t.rect.top > 0
+    assert t.rect.right < SCREEN_WIDTH
+    assert t.rect.left > 0
+    assert pygame.sprite.spritecollideany(t, ts)
