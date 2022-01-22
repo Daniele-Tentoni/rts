@@ -1,8 +1,11 @@
 # Imports
 
+from math import sqrt
+import math
 import random
 import pygame
 import pygame.font
+import pygame.key
 
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
@@ -105,10 +108,38 @@ class GameInstance:
       self.all_sprites.add(new_ruler)
 
   def init_towers(self) -> None:
-    # Init towers
-    for t in range(0, PLAYERS_NUMBER * 2):
-      x: float = SCREEN_WIDTH / 3 * (t + 1)
-      y: float = SCREEN_HEIGHT / 2
+    """Init towers for current game
+
+    Init tower depending on players number. Actually the number of towers in a
+    game instance is PLAYERS_NUMBER * 2 + 1, but that number can change in the
+    future.
+
+    The screen sections are as many as towers number and are filled with up to
+    one tower each. Inside every section, towers are placed in a random location.
+    """
+    tower_number = PLAYERS_NUMBER * 2 + 1
+    tower_each_side = sqrt(tower_number)
+    towers_y_side = math.ceil(tower_each_side)
+    towers_x_side = math.ceil(tower_each_side)
+    section_width = SCREEN_WIDTH / towers_x_side
+    section_height = SCREEN_HEIGHT / towers_y_side
+    section_list: list[tuple[bool, tuple(float, float), tuple(float, float)]] = list()
+    for x in range(0, towers_x_side):
+      for y in range(0, towers_y_side):
+        section_list.append((
+          False, (
+            section_width * x,
+            section_width * (x + 1),
+          ), (
+            section_height * y,
+            section_height * (y + 1),
+          ),
+        ))
+
+    for t in range(0, tower_number):
+      b, x_s, y_s = random.choice([s for s in section_list if not s[0]])
+      x: float = random.randint(x_s[0], x_s[1])
+      y: float = random.randint(y_s[0], y_s[1])
       tower = rts.sprites.tower.Tower(x, y)
       self.add_sprite_to(tower, self.towers)
 
@@ -211,7 +242,7 @@ class GameInstance:
     self,
     sprite: pygame.sprite.Sprite,
     group: pygame.sprite.Group,
-    ):
+  ) -> None:
     group.add(sprite)
     self.all_sprites.add(sprite)
 
