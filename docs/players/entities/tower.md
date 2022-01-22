@@ -1,6 +1,6 @@
 # Tower
 
-Is a blank square in the map and is a part of your kingdom. You have a kingdom as long you have control at least one tower.
+Is a blank square in the map and is a part of your kingdom. You have a kingdom as long you have control at least one tower. Towers are placed in your kingdom in a random position.
 
 Inside the blank square you can see the number of soldiers defending that tower.
 

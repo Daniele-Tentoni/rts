@@ -27,16 +27,16 @@ This structure has to be reported in the code, in the `def game_cycle(self) -> b
 ## Game Structure
 
 ```
--> Ruler
+─> Ruler
    |
-   +-> Tower
+   └─> Tower
        |
-       +-> Soldiers controlled by tower
+       ├─> Soldiers controlled by tower
        |   |
-       |   +-> Soldier
-       |   +-> Soldier
+       |   └─> Soldier
+       |   └─> Soldier
        |
-       +-> Routes
+       └─> Routes
            |
-           +-> Destination
+           └─> Destination
 ```
