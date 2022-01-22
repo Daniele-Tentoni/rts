@@ -1,3 +1,9 @@
 {
-  "cSpell.words": ["blit", "mkdocs", "pygame"]
+  "cSpell.words": [
+    "blit",
+    "codecov",
+    "mkdocs",
+    "pygame",
+    "venv"
+  ]
 }

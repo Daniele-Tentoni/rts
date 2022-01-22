@@ -17,5 +17,7 @@ nav:
           - "Tower": "players/entities/tower.md"
   - "Developer Guides":
       - "Developers": "developers/index.md"
+      - "Getting started": "developers/getting_started.md"
+      - "Unit testing": "developers/unit_testing.md"
 
 theme: readthedocs

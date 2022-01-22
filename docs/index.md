@@ -13,7 +13,7 @@ This site will contains both developer documentation and player guides at the mo
 
 ## Developers
 
-Work in progress.
+Start contributing as soon as possible following guides in [Developers Section](developers/index.md).
 
 ## Players
 

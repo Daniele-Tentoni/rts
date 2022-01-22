@@ -1,6 +1,12 @@
 # Developer Guides
 
-In this section is explained the entire game for developers.
+In this section is explained the entire game for developers. Here you can learn how to getting started contributing and add features or unit testing.
+
+Start here: [Getting Started](getting_started.md).
+
+Then learn how to contribute on many common things like game assets.
+
+Learn how to contribute to [unit testing](unit_testing.md) and bug fixing to make this game a better game.
 
 ## Game Cycle
 
