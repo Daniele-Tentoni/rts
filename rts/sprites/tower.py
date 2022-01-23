@@ -1,43 +1,42 @@
-import random
-from typing import Sequence
+from pygame import Surface
+import pygame.font as font
 
-from rts.config import (
-  FONT_NAME,
+from config import (
   FONT_SIZE,
   TEXT_COLOR,
-  TOWER_SIZE,
-  TOWER_COLOR,
+  LIMIT_PER_LEVEL
 )
+from controllers.time_controller import DELTA_TIME
+from controllers.entity_controller import EntityController
+from models.game_entity import GameEntity
+from sprites.soldier import Soldier
 
-from pygame.locals import (
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
-)
-
-from pygame import Surface
-import pygame.font
-from pygame.sprite import Group, Sprite
-
-# Array with soldiers limits per level for towers
-# First one is the minimum, the second one is the maximum.
-limits_per_level = [{ 'min': 0, 'max': 10 }]
-
-class Tower(Sprite):
+class Tower(GameEntity):
   """
   Tower definition.
 
-  It contains method to draw it and update his position. You can update his position without drawing it.
+  It contains method to draw it and update its position. You can update its position without drawing it.
   """
-  starting_coordinates: tuple[float, float]
-  level: int = 1
-  soldiers: Group
-  soldiers_label: Surface
-  show_soldiers: bool
-  soldiers_updated: bool
 
-  def __init__(self, x: float, y: float) -> None:
+  # Level of the tower
+  level: int
+
+  # Custom color and size for the tower
+  soldier_color: tuple(int, int, int)
+  soldier_size: tuple(float, float)
+  # Soldier generation ratio
+  soldier_gen_ratio: float
+  # Number of soldiers waiting for creation
+  soldier_gen_pool: float = 0
+
+  # Soldiers number associated to the tower
+  soldiers_number: int
+  # Soldiers number label
+  soldiers_label: Surface
+
+  # Constructor
+  def __init__(self, e: GameEntity, level: int, soldier_color: tuple(int, int, int),
+    soldier_size: tuple(float, float), soldier_gen_ratio: float) -> None:
     """Creates a new Tower entity.
 
     Create a new Tower entity with a surface and a rectangle.
@@ -47,63 +46,57 @@ class Tower(Sprite):
         x (float): initial position
         y (float): initial position
     """
-    super(Tower, self).__init__()
 
-    self.starting_coordinates = (x, y)
-    self.surf = Surface(TOWER_SIZE)
-    self.surf.fill(TOWER_COLOR)
-    self.rect = self.surf.get_rect()
-    self.rect.move_ip(self.starting_coordinates)
+    # Base class initialization
+    super(Tower, self).__init__(e.x, e.y, e.color, e.size)
 
-    self.soldiers = Group()
-    self.show_soldiers = True # TODO: Let user toggle soldiers.
-    self.soldiers_updated = True
+    # Instance unique properties
+    self.soldier_color = soldier_color
+    self.soldier_size = soldier_size
+    self.level = level
+    self.soldier_gen_ratio = soldier_gen_ratio
 
-  def update(self):
+  # Updates the state of the instance
+  def update(self) -> None:
     """Update tower and her soldiers.
 
     Update the tower and the label of soldier assigned to the tower.
     """
-    if self.show_soldiers:
-      self.update_soldiers_label()
 
-  def update_soldiers_label(self):
+    # Adds soldiers to the pool if limit has not been reached
+    if self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]:
+      # Adds soldiers in the pool depending on the generation ratio
+      self.soldier_gen_pool += self.soldier_gen_ratio * DELTA_TIME
+    # Otherwise refreshed the soldiers number
+    #TODO: Should we keep the original value or set it to zero?
+    else:
+      self.soldier_gen_pool = 0
+
+    # Updates the soldiers number label
+    #TODO: Soldier number counting
+    self.update_soldiers_label()
+
+  # Updates and renders the soldiers number label
+  def update_soldiers_label(self) -> None:
     """Update soldiers label inside tower.
 
     Update soldiers label content inside tower with the current length of
     soldiers sprite group. Remember to keep this updated.
     """
-    self.surf.fill(TOWER_COLOR)
-    sys_font = pygame.font.SysFont(pygame.font.get_default_font(), FONT_SIZE)
+
+    # Setting up the label
+    self.surf.fill(self.color)
+    sys_font = font.SysFont(font.get_default_font(), FONT_SIZE)
     self.soldiers_label = sys_font.render(
-      str(len(self.soldiers)),
+      str(self.soldiers_number),
       True,
       TEXT_COLOR
     )
-    textrect = self.soldiers_label.get_rect(center = self.surf.get_rect().center)
+    textrect = self.soldiers_label.get_rect(center = self.rect.center)
     self.surf.blit(self.soldiers_label, textrect)
 
-  def arrange_soldiers(self):
-    import rts.sprites.soldier
-    for soldier in self.soldiers:
-      if isinstance(soldier, rts.sprites.soldier.Soldier):
-        soldier.arrange()
-
-  def spawn_soldier(self):
-    """Spawn a soldier near the tower.
-
-    Spawn a new soldier if is possible and return it. Otherwise return None.
-
-    Returns:
-      [rts.sprites.soldier.Soldier | None]: New Soldier created or None value
-        if the soldier was not created, like when the soldier limit is reach.
-    """
-    max_soldiers = limits_per_level[self.level - 1]['max']
-    if len(self.soldiers) < max_soldiers:
-      return self.add_soldier()
-    return None
-
-  def add_soldier(self):
+  # Generates new soldiers depending on the pool number on the same position of the tower
+  def create_soldiers(self) -> None:
     """Spawn a new soldier.
 
     Spawn a soldier near the tower, given her center coordinates. Then, add the
@@ -112,8 +105,14 @@ class Tower(Sprite):
     Returns:
       [rts.sprites.soldier.Soldier]: New Soldier created
     """
-    import rts.sprites.soldier
-    new_soldier = rts.sprites.soldier.Soldier(self)
-    self.soldiers.add(new_soldier)
-    self.soldiers_updated = True
-    return new_soldier
+    
+    # Reference to the entity controller
+    ent_cont = EntityController()
+
+    # Generates one soldier at a time until limit gets reached or pool gets empty
+    while self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1] and self.soldier_gen_pool >= 1:
+      self.soldier_gen_pool -= 1
+      self.soldiers_number += 1
+
+      soldier = Soldier(GameEntity(self.x, self.y, self.soldier_color, self.soldier_size))
+      ent_cont.register_entity(soldier)

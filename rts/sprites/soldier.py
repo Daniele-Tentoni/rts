@@ -1,21 +1,21 @@
-import random
+from cmath import atan, cos, sin
+from random import randint
 
-from pygame import Surface
-import pygame.sprite
+from controllers.time_controller import DELTA_TIME
+from models.game_entity import GameEntity
 
-from rts.config import (
-  SOLDIER_COLOR,
-  SOLDIER_RADIUS_AROUND_TOWER,
-  SOLDIER_SIZE,
-)
+class Soldier(GameEntity):
+  # Position the soldier is binded to
+  #TODO: Maybe change it to a particular entity?
+  origin: tuple(float, float)
+  origin_radius: float
 
-import rts.sprites.tower
+  # Speed of the soldier
+  speed: float
 
-class Soldier(pygame.sprite.Sprite):
-
-  mother_tower: rts.sprites.tower.Tower
-
-  def __init__(self, mother_tower: rts.sprites.tower.Tower) -> None:
+  # Constructor
+  def __init__(self, e: GameEntity, origin: tuple(float, float),
+    origin_radius: float, speed: float) -> None:
     """
     Create a new Soldier entity.
 
@@ -24,26 +24,16 @@ class Soldier(pygame.sprite.Sprite):
     Args:
         mother_tower (Tower): This is the mother tower, where the soldier has been generated.
     """
-    if not mother_tower:
-      raise ValueError('mother_tower argument must be valued')
 
-    super(Soldier, self).__init__()
+    # Base class initialization
+    super(Soldier, self).__init__(e.x, e.y, e.color, e.size)
 
-    # Sprite stuff.
-    self.surf = Surface(SOLDIER_SIZE)
-    self.surf.fill(SOLDIER_COLOR)
+    # Instance unique properties
+    self.origin = origin
+    self.speed = speed
 
-    base_x = mother_tower.rect.centerx
-    base_y = mother_tower.rect.centery
-    random_x = random.randint(base_x + 10, base_x + 50)
-    random_y = random.randint(base_y + 10, base_y + 50)
-    self.rect = self.surf.get_rect(center = (random_x, random_y))
-
-    self.speed = 0.5
-
-    self.mother_tower = mother_tower
-
-  def update(self):
+  # Updates the state of the instance
+  def update(self) -> None:
     """
     Update the soldier location.
 
@@ -51,24 +41,33 @@ class Soldier(pygame.sprite.Sprite):
     belongs, removing the reference to it as well. This allow garbage collector
     to reclaim the memory as necessary.
     """
-    # self.rect.move_ip(-self.speed / 2, 0)
-    if self.rect.right < 0:
-      print(f"killed")
-      self.kill() # Remove from screen and memory.
 
-  def arrange(self):
-    random_x = random.randint(-5, 5) * self.speed
-    random_y = random.randint(-5, 5) * self.speed
-    self.rect.move_ip((random_x, random_y))
+    # Updates the position of the instance
+    self.update_position()
 
-    # Check max radius
-    if self.rect.left < self.mother_tower.rect.left - SOLDIER_RADIUS_AROUND_TOWER:
-      self.rect.left = self.mother_tower.rect.left - SOLDIER_RADIUS_AROUND_TOWER
-    if self.rect.right > self.mother_tower.rect.right + SOLDIER_RADIUS_AROUND_TOWER:
-      self.rect.right = self.mother_tower.rect.right + SOLDIER_RADIUS_AROUND_TOWER
-    if self.rect.top < self.mother_tower.rect.top - SOLDIER_RADIUS_AROUND_TOWER:
-      self.rect.top = self.mother_tower.rect.top - SOLDIER_RADIUS_AROUND_TOWER
-    if self.rect.bottom > self.mother_tower.rect.bottom + SOLDIER_RADIUS_AROUND_TOWER:
-      self.rect.bottom = self.mother_tower.rect.bottom + SOLDIER_RADIUS_AROUND_TOWER
+  # Moves the instance in a random way
+  def update_position(self) -> None:
+    # Generates the displacement
+    delta_x = randint(-1, 1) * self.speed * DELTA_TIME
+    delta_y = randint(-1, 1) * self.speed * DELTA_TIME
 
-    # TODO: resolve any possible collision with other soldiers and tower
+    # Updates the position of the instance
+    self.x += delta_x
+    self.y += delta_y
+
+    # Moves the rectangle of the soldier
+    self.update_rect()
+  
+  # Moves the rect of the ruler according to the current entity coordinates
+  def update_rect(self) -> None:
+    # Checks the position limit by looking at the center position only
+    #TODO: Rectangle thickness is not checked, is it important?
+    if self.x ** 2 + self.y ** 2 > self.origin_radius ** 2:
+      # Moves the center radially towards the center
+      #TODO: Verify if the atan is the correct function
+      angle = atan(self.y / self.x)
+      self.x = self.origin_radius * cos(angle)
+      self.y = self.origin_radius * sin(angle)
+
+    # Moves the rect of the instance
+    self.rect.center = (self.x, self.y)
