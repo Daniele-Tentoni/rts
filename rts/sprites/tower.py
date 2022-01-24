@@ -1,15 +1,14 @@
 from pygame import Surface
 import pygame.font as font
 
-from config import (
+from rts.config import (
   FONT_SIZE,
   TEXT_COLOR,
   LIMIT_PER_LEVEL
 )
-from controllers.time_controller import DELTA_TIME
-from controllers.entity_controller import EntityController
-from models.game_entity import GameEntity
-from sprites.soldier import Soldier
+from rts.controllers.time_controller import DELTA_TIME
+from rts.models.game_entity import GameEntity
+from rts.sprites.soldier import Soldier
 
 class Tower(GameEntity):
   """
@@ -22,29 +21,25 @@ class Tower(GameEntity):
   level: int
 
   # Custom color and size for the tower
-  soldier_color: tuple(int, int, int)
-  soldier_size: tuple(float, float)
+  soldier_color: tuple[int, int, int]
+  soldier_size: tuple[float, float]
   # Soldier generation ratio
   soldier_gen_ratio: float
   # Number of soldiers waiting for creation
   soldier_gen_pool: float = 0
 
   # Soldiers number associated to the tower
-  soldiers_number: int
+  soldiers_number: int = 0
   # Soldiers number label
   soldiers_label: Surface
 
   # Constructor
-  def __init__(self, e: GameEntity, level: int, soldier_color: tuple(int, int, int),
-    soldier_size: tuple(float, float), soldier_gen_ratio: float) -> None:
+  def __init__(self, e: GameEntity, level: int, soldier_color: tuple[int, int, int],
+    soldier_size: tuple[float, float], soldier_gen_ratio: float) -> None:
     """Creates a new Tower entity.
 
     Create a new Tower entity with a surface and a rectangle.
     Inside the tower is displayed the number of soldier defending it.
-
-    Args:
-        x (float): initial position
-        y (float): initial position
     """
 
     # Base class initialization
@@ -67,14 +62,11 @@ class Tower(GameEntity):
     if self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]:
       # Adds soldiers in the pool depending on the generation ratio
       self.soldier_gen_pool += self.soldier_gen_ratio * DELTA_TIME
-    # Otherwise refreshed the soldiers number
-    #TODO: Should we keep the original value or set it to zero?
-    else:
-      self.soldier_gen_pool = 0
 
     # Updates the soldiers number label
     #TODO: Soldier number counting
     self.update_soldiers_label()
+    print('Update tower')
 
   # Updates and renders the soldiers number label
   def update_soldiers_label(self) -> None:
@@ -105,14 +97,16 @@ class Tower(GameEntity):
     Returns:
       [rts.sprites.soldier.Soldier]: New Soldier created
     """
-    
+    from rts.controllers.entity_controller import EntityController
+
     # Reference to the entity controller
     ent_cont = EntityController()
 
     # Generates one soldier at a time until limit gets reached or pool gets empty
     while self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1] and self.soldier_gen_pool >= 1:
+      print('Create soldier')
       self.soldier_gen_pool -= 1
       self.soldiers_number += 1
 
-      soldier = Soldier(GameEntity(self.x, self.y, self.soldier_color, self.soldier_size))
+      soldier = Soldier(GameEntity(self.x, self.y, self.soldier_color, self.soldier_size), (self.x, self.y), 1, 1)
       ent_cont.register_entity(soldier)

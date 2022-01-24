@@ -12,14 +12,15 @@ from pygame.locals import (
   QUIT,
 )
 
-from config import *
-from models.game_entity import GameEntity
-from controllers.entity_controller import EntityController
-from controllers.event_controller import EventController
-from sprites.ruler import Ruler
-from sprites.tower import Tower
+from rts.config import *
+from rts.models.game_entity import GameEntity
+from rts.controllers.entity_controller import EntityController
+from rts.controllers.event_controller import EventController
+from rts.sprites.ruler import Ruler
+from rts.sprites.tower import Tower
 
 class Game:
+  running: bool
   routes: list[tuple[tuple[float, float], tuple[float, float]]]
   tower_traced: Tower
 
@@ -35,21 +36,19 @@ class Game:
   rulers_number: int
 
   # Constructor
-  def __init__(self, screen: Surface, rulers_number: int) -> None:
+  def __init__(self, screen: Surface, rulers_number: int = 2) -> None:
     """Init the game view.
 
-    Init the game instance, adding rulers and their towers. Create events to
-    spawn soldiers in each tower.
-
-    Creating game instance without giving the number of non playable characters
-    to the constructor means that we want to generate a game with only 2
-    players: one for the current user, one for the computer.
+    Init the game instance, adding rulers and their towers.
 
     Args:
-      screen (pygame.Surface): screen where game is displayed.
-      npc (int): number of non playable characters.
+      screen (pygame.Surface):
+        screen where game is displayed.
+      rulers_number (int):
+        number of rulers in play.
     """
 
+    self.running = False
     self.routes = list()
     self.tower_traced = None
 
@@ -117,24 +116,18 @@ class Game:
 
   # Keeps computing and showing frames until exit is requested
   def game_loop(self) -> None:
-    """Run a single game cycle.
-
-    Run a single game cycle and return if the game as to be closed or not.
-
-    Returns:
-        bool: True if the game has to be closed, false otherwise.
-    """
 
     # Game loop exit flag
-    exit = False
+    self.running = True
     # Exit event
     #TODO: Need to define event.type = QUIT
-    def stop_cycle():
-      exit = True
-    self.event_controller.register_key_event(K_ESCAPE, stop_cycle)
+    def stop_loop():
+      self.running = False
+
+    self.event_controller.register_key_event(K_ESCAPE, stop_loop)
 
     # Keeps looping until exit is required
-    while not exit:
+    while self.running:
       # Screen cleaning
       self.screen.fill(SCREEN_COLOR)
 

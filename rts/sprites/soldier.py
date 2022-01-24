@@ -1,28 +1,26 @@
 from cmath import atan, cos, sin
+from math import atan2
 from random import randint
 
-from controllers.time_controller import DELTA_TIME
-from models.game_entity import GameEntity
+from rts.controllers.time_controller import DELTA_TIME
+from rts.models.game_entity import GameEntity
 
 class Soldier(GameEntity):
   # Position the soldier is binded to
   #TODO: Maybe change it to a particular entity?
-  origin: tuple(float, float)
+  origin: tuple[float, float]
   origin_radius: float
 
   # Speed of the soldier
   speed: float
 
   # Constructor
-  def __init__(self, e: GameEntity, origin: tuple(float, float),
+  def __init__(self, e: GameEntity, origin: tuple[float, float],
     origin_radius: float, speed: float) -> None:
     """
     Create a new Soldier entity.
 
     Create a new Tower entity with a surface and a rectangle.
-
-    Args:
-        mother_tower (Tower): This is the mother tower, where the soldier has been generated.
     """
 
     # Base class initialization
@@ -30,6 +28,7 @@ class Soldier(GameEntity):
 
     # Instance unique properties
     self.origin = origin
+    self.origin_radius = origin_radius
     self.speed = speed
 
   # Updates the state of the instance
@@ -57,17 +56,18 @@ class Soldier(GameEntity):
 
     # Moves the rectangle of the soldier
     self.update_rect()
-  
+
   # Moves the rect of the ruler according to the current entity coordinates
   def update_rect(self) -> None:
     # Checks the position limit by looking at the center position only
     #TODO: Rectangle thickness is not checked, is it important?
-    if self.x ** 2 + self.y ** 2 > self.origin_radius ** 2:
+    #  500 ** 2 + 600 ** 2 > 10 ** 2
+    if (self.x - self.origin[0]) ** 2 + (self.y - self.origin[1]) ** 2 > self.origin_radius ** 2:
       # Moves the center radially towards the center
       #TODO: Verify if the atan is the correct function
-      angle = atan(self.y / self.x)
-      self.x = self.origin_radius * cos(angle)
-      self.y = self.origin_radius * sin(angle)
+      angle = atan2(self.y, self.x).real
+      self.x = self.origin_radius * cos(angle).real
+      self.y = self.origin_radius * sin(angle).real
 
     # Moves the rect of the instance
     self.rect.center = (self.x, self.y)

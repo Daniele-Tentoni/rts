@@ -1,5 +1,6 @@
+from tkinter import EventType
 from typing import Callable, Dict, List, Tuple
-from pygame import USEREVENT, key
+from pygame import QUIT, USEREVENT, key
 from pygame.time import set_timer
 from pygame.event import get as get_events
 
@@ -9,16 +10,14 @@ class EventControllerSingleton:
     self.__dict__ = self._shared_state
 
 class EventController(EventControllerSingleton):
-  # Counts the number of registered time events
-  time_event_counter: int = 0
   # Time events callbacks dictionary where the key is the event code
-  time_events: Dict[int, List(Callable[[], None])] = dict()
+  time_events: Dict[int, List[Callable[[], None]]] = dict()
 
   # Key events callbacks dictionary where the key is the key code
-  key_events: Dict[int, List(Callable[[], None])] = dict()
+  key_events: Dict[int, List[Callable[[], None]]] = dict()
 
   # Trigger events callbacks list where the first element of the tuple is the trigger condition
-  trigger_event: List(Tuple(Callable[[], bool], Callable[[], None])) = list()
+  trigger_event: List[Tuple[Callable[[], bool], Callable[[], None]]] = list()
 
   # Constructor
   def __init__(self):
@@ -36,60 +35,52 @@ class EventController(EventControllerSingleton):
   def handle_events(self):
     # Time events
     for event in get_events():
-      if self.time_events[event.type - USEREVENT - 1] is not None:
-        for callback in self.time_events[event.type - USEREVENT - 1]:
+      if event.type in self.time_events and (v := self.time_events[event.type]):
+        for callback in v:
           callback()
-    
+
     # Key events
-    for key, callbacks in self.key_events:
-      if is_key_pressed(key):
+    keys = key.get_pressed()
+    for k, callbacks in self.key_events.items():
+      if is_key_pressed(k, keys):
         for callback in callbacks:
           callback()
-    
+
     # Triggered events
-    for event in self.trigger_event:
-      condition, callback = event
+    [callback() for condition, callback in self.trigger_event if condition()]
 
-      if condition():
-        callback()
-
-  # Adds a new event to timer schedule and return its code
+  # Adds a new event to timer schedule and return its code: max 7 events.
   def register_time_event(self, time_span: int) -> int:
     # Adds the event to schedule
-    self.time_event_counter += 1
-    set_timer(self.time_event_counter + USEREVENT, time_span)
+    event_code = len(self.time_events) + USEREVENT + 1
+    set_timer(event_code, time_span)
 
     # Prepares the callback list
-    self.time_events[self.time_event_counter - 1] = ()
+    self.time_events[event_code] = list()
 
-    return self.time_event_counter + USEREVENT
+    return event_code
 
-  # Removes the given envet from timer schedule
+  # Removes the given event from timer schedule
   #TODO: Remove callbacks
   def remove_time_event(self, event_code: int) -> None:
     set_timer(event_code, 0)
 
   # Adds a new callback function to the given time event
   def register_time_callback(self, event_code: int, callback: Callable[[], None]) -> None:
-    self.time_events[event_code].add(callback)
-  
+    self.time_events[event_code].append(callback)
+
   # Adds a new callback function to the given key event
   def register_key_event(self, key: int, callback: Callable[[], None]) -> None:
     # Creates the list if it does not exist
-    if self.key_events[key] is None:
-        self.key_events[key] = ()
-    
-    self.key_events[key].add(callback)
-  
+    if key not in self.key_events or not self.key_events[key]:
+      self.key_events[key] = list()
+
+    self.key_events[key].append(callback)
+
   # Adds a new triggered event callback to the list
   def register_trigger_event(self, condition: Callable[[], bool], callback: Callable[[], None]):
-    self.trigger_event.add((condition, callback))
+    self.trigger_event.append((condition, callback))
 
 # Checks whether or not a given key is pressed
-def is_key_pressed(k):
-  pressed_keys = key.get_pressed()
-
-  if k in pressed_keys and pressed_keys[k]:
-    return True
-  else:
-    return False
+def is_key_pressed(key, keys):
+  return key in keys and keys[key]

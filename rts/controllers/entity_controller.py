@@ -1,9 +1,9 @@
 from pygame.sprite import Group
 
-from models.game_entity import GameEntity
-from sprites.ruler import Ruler
-from sprites.soldier import Soldier
-from sprites.tower import Tower
+from rts.models.game_entity import GameEntity
+from rts.sprites.ruler import Ruler
+from rts.sprites.soldier import Soldier
+from rts.sprites.tower import Tower
 
 class EntityControllerSingleton:
   _shared_state = {}

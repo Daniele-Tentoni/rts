@@ -1,11 +1,12 @@
+import os
 import pygame
 
-from config import (
+from rts.config import (
   GAME_NAME,
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
 )
-from game import Game
+from rts.game import Game
 
 def main():
   """Main function, entry point of the game.
@@ -20,7 +21,7 @@ def main():
   # Stops any further operation if some initializations failed
   if failed > 0:
     print("Something went wrong during pygame init")
-    return
+    exit(os.EX_DATAERR)
 
   # Initial setup of the game
   pygame.display.set_caption(GAME_NAME)
@@ -33,3 +34,4 @@ def main():
   # Releases imported modules
   pygame.font.quit()
   pygame.quit()
+  exit(os.EX_OK)

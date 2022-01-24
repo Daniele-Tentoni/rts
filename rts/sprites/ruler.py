@@ -1,8 +1,8 @@
 from pygame import Surface
 
-import config
-from controllers.time_controller import DELTA_TIME
-from models.game_entity import GameEntity
+from rts import config
+from rts.controllers.time_controller import DELTA_TIME
+from rts.models.game_entity import GameEntity
 
 class Ruler(GameEntity):
   """
@@ -11,9 +11,6 @@ class Ruler(GameEntity):
   A Ruler is the entity directly controller by the player.
 
   It contains method to draw it and update his position.
-
-  Args:
-    pygame (pygame.sprite.Sprite): Pygame Sprite.
   """
 
   # Speed of the ruler
@@ -26,10 +23,6 @@ class Ruler(GameEntity):
 
     Create a new Ruler instance with a surface and a rectangle. If given
     starting position make sprite exceed the screen, it will move in.
-
-    Args:
-      x (float): initial horizontal position.
-      y (float): initial vertical position.
     """
 
     # Base class initialization
@@ -42,9 +35,6 @@ class Ruler(GameEntity):
   def update(self) -> None:
     """
     Move the Ruler rectangle by pressed key event.
-
-    Args:
-      pressed_keys (Sequence[bool]): events sequence.
     """
 
     # Updates the position of the instance
@@ -53,7 +43,8 @@ class Ruler(GameEntity):
   # Moves the instance depending on the keys pressed
   def update_position(self) -> None:
     # Moves the rect of the ruler
-    self.rect.move(self.x, self.y)
+    self.rect.left = self.x
+    self.rect.top = self.y
 
     # Keeps the rectangle within screen limits
     if self.rect.left < 0:
@@ -88,6 +79,7 @@ class Ruler(GameEntity):
 
   # Upwards movement
   def move_up(self) -> None:
+    print(f'Moving ruler')
     self.y += -DELTA_TIME * self.speed
 
   # Downwards movement
