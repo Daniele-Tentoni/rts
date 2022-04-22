@@ -119,6 +119,7 @@ class Game:
 
     # Game loop exit flag
     self.running = True
+
     # Exit event
     #TODO: Need to define event.type = QUIT
     def stop_loop():

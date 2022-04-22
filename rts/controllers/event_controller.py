@@ -1,6 +1,5 @@
-from tkinter import EventType
 from typing import Callable, Dict, List, Tuple
-from pygame import QUIT, USEREVENT, key
+from pygame import K_ESCAPE, QUIT, USEREVENT, key
 from pygame.time import set_timer
 from pygame.event import get as get_events
 
@@ -22,6 +21,7 @@ class EventController(EventControllerSingleton):
   # Constructor
   def __init__(self):
     EventControllerSingleton.__init__(self)
+    self.a = False
 
   # Resets the instance by removing all events and all callbacks
   #TODO: Cancel registered events and free memory from callbacks
@@ -42,7 +42,7 @@ class EventController(EventControllerSingleton):
     # Key events
     keys = key.get_pressed()
     for k, callbacks in self.key_events.items():
-      if is_key_pressed(k, keys):
+      if keys[k]:
         for callback in callbacks:
           callback()
 
@@ -72,10 +72,11 @@ class EventController(EventControllerSingleton):
   # Adds a new callback function to the given key event
   def register_key_event(self, key: int, callback: Callable[[], None]) -> None:
     # Creates the list if it does not exist
-    if key not in self.key_events or not self.key_events[key]:
+    if key not in self.key_events or self.key_events[key] is None:
       self.key_events[key] = list()
 
     self.key_events[key].append(callback)
+    print(f"Registered key {key} for {callable}")
 
   # Adds a new triggered event callback to the list
   def register_trigger_event(self, condition: Callable[[], bool], callback: Callable[[], None]):

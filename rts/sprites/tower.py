@@ -66,7 +66,6 @@ class Tower(GameEntity):
     # Updates the soldiers number label
     #TODO: Soldier number counting
     self.update_soldiers_label()
-    print('Update tower')
 
   # Updates and renders the soldiers number label
   def update_soldiers_label(self) -> None:
@@ -104,7 +103,6 @@ class Tower(GameEntity):
 
     # Generates one soldier at a time until limit gets reached or pool gets empty
     while self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1] and self.soldier_gen_pool >= 1:
-      print('Create soldier')
       self.soldier_gen_pool -= 1
       self.soldiers_number += 1
 
