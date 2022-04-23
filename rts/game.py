@@ -114,7 +114,12 @@ class Game:
       y: float = SCREEN_HEIGHT / 2
 
       # Creates the instance and adds it to the list
-      tower = Tower(GameEntity(x, y, TOWER_COLOR, TOWER_SIZE), 1, SOLDIER_COLOR, SOLDIER_SIZE, 1)
+      tower = Tower(
+        e= GameEntity(x, y, TOWER_COLOR, TOWER_SIZE),
+        level= 1,
+        soldier_color= SOLDIER_COLOR,
+        soldier_size= SOLDIER_SIZE,
+        soldier_gen_ratio= 0.001)
       self.entity_controller.register_entity(tower)
       self.event_controller.register_time_callback(add_soldiers, tower.create_soldiers)
 
@@ -137,7 +142,7 @@ class Game:
       self.screen.fill(SCREEN_COLOR)
 
       # System label rendering
-      label = self.sys_font.render("Send soldiers from your tower to enemy ones to conquer them.", 1, TEXT_COLOR)
+      label = self.sys_font.render("To conquer enemy towers, send them soldiers from your towers.", 1, TEXT_COLOR)
       self.screen.blit(label, (80, 40))
 
       #TODO: Compute DELTA_TIME
