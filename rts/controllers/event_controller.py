@@ -21,7 +21,6 @@ class EventController(EventControllerSingleton):
   # Constructor
   def __init__(self):
     EventControllerSingleton.__init__(self)
-    self.a = False
 
   # Resets the instance by removing all events and all callbacks
   #TODO: Cancel registered events and free memory from callbacks
@@ -51,6 +50,18 @@ class EventController(EventControllerSingleton):
 
   # Adds a new event to timer schedule and return its code: max 7 events.
   def register_time_event(self, time_span: int) -> int:
+    """Register a new time event.
+
+    Register a new time event for pygame timer, giving it a time span.
+    By pygame internal design, we can register up to 7 time events, so be
+    careful!
+
+    :param time_span: time span to trigger the timed event
+    :type time_span: int
+    :return: the event code registered
+    :rtype: int
+    """
+
     # Adds the event to schedule
     event_code = len(self.time_events) + USEREVENT + 1
     set_timer(event_code, time_span)
