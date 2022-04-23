@@ -106,5 +106,9 @@ class Tower(GameEntity):
       self.soldier_gen_pool -= 1
       self.soldiers_number += 1
 
-      soldier = Soldier(GameEntity(self.x, self.y, self.soldier_color, self.soldier_size), (self.x, self.y), 1, 1)
+      soldier = Soldier(
+        e=GameEntity(self.x, self.y, self.soldier_color, self.soldier_size),
+        origin=(self.x, self.y),
+        origin_radius=25,
+        speed=1)
       ent_cont.register_entity(soldier)

@@ -24,7 +24,11 @@ class Soldier(GameEntity):
     """
 
     # Base class initialization
-    super(Soldier, self).__init__(e.x, e.y, e.color, e.size)
+    diff_x=randint(-origin_radius, origin_radius)
+    diff_y=randint(-origin_radius, origin_radius)
+    def_x=e.x+diff_x
+    def_y=e.y+diff_y
+    super(Soldier, self).__init__(def_x, def_y, e.color, e.size)
 
     # Instance unique properties
     self.origin = origin
@@ -60,14 +64,22 @@ class Soldier(GameEntity):
   # Moves the rect of the ruler according to the current entity coordinates
   def update_rect(self) -> None:
     # Checks the position limit by looking at the center position only
-    #TODO: Rectangle thickness is not checked, is it important?
+    # TODO: Rectangle thickness is not checked, is it important?
     #  500 ** 2 + 600 ** 2 > 10 ** 2
-    if (self.x - self.origin[0]) ** 2 + (self.y - self.origin[1]) ** 2 > self.origin_radius ** 2:
+    """if (self.x - self.origin[0]) ** 2 + (self.y - self.origin[1]) ** 2 > self.origin_radius ** 2:
       # Moves the center radially towards the center
-      #TODO: Verify if the atan is the correct function
+      # TODO: Verify if the atan is the correct function
       angle = atan2(self.y, self.x).real
       self.x = self.origin_radius * cos(angle).real
-      self.y = self.origin_radius * sin(angle).real
+      self.y = self.origin_radius * sin(angle).real"""
+    if self.x > self.origin[0] + self.origin_radius:
+      self.x = self.origin[0] + self.origin_radius
+    if self.x < self.origin[0] - self.origin_radius:
+      self.x = self.origin[0] - self.origin_radius
+    if self.y < self.origin[1] - self.origin_radius:
+      self.y = self.origin[1] - self.origin_radius
+    if self.y > self.origin[1] + self.origin_radius:
+      self.y = self.origin[1] + self.origin_radius
 
     # Moves the rect of the instance
     self.rect.center = (self.x, self.y)

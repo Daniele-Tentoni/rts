@@ -79,7 +79,6 @@ class Ruler(GameEntity):
 
   # Upwards movement
   def move_up(self) -> None:
-    print(f'Moving ruler')
     self.y += -DELTA_TIME * self.speed
 
   # Downwards movement
