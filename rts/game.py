@@ -1,6 +1,6 @@
 from random import randint
 
-from pygame import Surface
+from pygame import K_DOWN, K_LEFT, K_RIGHT, K_UP, Surface
 from pygame import display, font, mouse, draw
 from pygame import (
   K_w, K_a, K_s, K_d,
@@ -92,6 +92,10 @@ class Game:
         self.event_controller.register_key_event(K_a, ruler.move_left)
         self.event_controller.register_key_event(K_s, ruler.move_down)
         self.event_controller.register_key_event(K_d, ruler.move_right)
+        self.event_controller.register_key_event(K_UP, ruler.move_up)
+        self.event_controller.register_key_event(K_LEFT, ruler.move_left)
+        self.event_controller.register_key_event(K_DOWN, ruler.move_down)
+        self.event_controller.register_key_event(K_RIGHT, ruler.move_right)
 
       # Adds the instance to the list
       self.entity_controller.register_entity(ruler)
