@@ -77,7 +77,14 @@ class EventController(EventControllerSingleton):
     set_timer(event_code, 0)
 
   # Adds a new callback function to the given time event
-  def register_time_callback(self, event_code: int, callback: Callable[[], None]) -> None:
+  def register_time_callback(
+    self,
+    event_code: int,
+    callback: Callable[[], None]
+    ) -> None:
+    if event_code not in self.time_events.keys():
+      self.time_events[event_code] = list()
+
     self.time_events[event_code].append(callback)
 
   # Adds a new callback function to the given key event
