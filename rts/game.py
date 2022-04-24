@@ -86,7 +86,7 @@ class Game:
       ruler = Ruler(GameEntity(x, y, RULER_COLOR, RULER_SIZE), 1)
 
       # Assigns the first ruler to the player by adding the movement events
-      #TODO: Add arrows movement, maybe?
+      # TODO: Add arrows movement, maybe?
       if n == 0:
         self.event_controller.register_key_event(K_w, ruler.move_up)
         self.event_controller.register_key_event(K_a, ruler.move_left)
@@ -96,6 +96,8 @@ class Game:
         self.event_controller.register_key_event(K_LEFT, ruler.move_left)
         self.event_controller.register_key_event(K_DOWN, ruler.move_down)
         self.event_controller.register_key_event(K_RIGHT, ruler.move_right)
+
+      # if n > 0: # move other rulers from sockets events
 
       # Adds the instance to the list
       self.entity_controller.register_entity(ruler)

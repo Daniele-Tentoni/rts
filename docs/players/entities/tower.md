@@ -20,6 +20,8 @@ The following table present how levels will be managed:
 
 | Level | Soldiers/sec | Soldier output/sec | Maximum | Minimum |
 | ----- | :----------: | :----------------: | :-----: | :-----: |
-| 1     |     1/s      |        1/s         |   10    |    0    |
-| 2     |     1/s      |        1/s         |   20    |    5    |
-| 3     |     1/s      |        1/s         |   40    |   15    |
+| 1     |     1/s      |        1/s         |   2    |    0    |
+| 2     |     1/s      |        1/s         |   5    |    2    |
+| 3     |     1/s      |        1/s         |   10    |   5    |
+| 3     |     1/s      |        1/s         |   20    |   10    |
+| 3     |     1/s      |        1/s         |   50    |   20    |

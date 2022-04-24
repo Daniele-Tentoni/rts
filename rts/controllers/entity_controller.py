@@ -1,9 +1,7 @@
+from typing import Dict, Type, TypeVar
 from pygame.sprite import Group
 
 from rts.models.game_entity import GameEntity
-from rts.sprites.ruler import Ruler
-from rts.sprites.soldier import Soldier
-from rts.sprites.tower import Tower
 
 class EntityControllerSingleton:
   _shared_state = {}
@@ -13,32 +11,29 @@ class EntityControllerSingleton:
 class EntityController(EntityControllerSingleton):
   # Game entities groups
   game_entities: Group
-  # Separated game entities depending on their class
-  #TODO: Is this really needed when we can search using instance type?
-  rulers: Group
-  soldiers: Group
-  towers: Group
 
   # Constructor
   def __init__(self):
     EntityControllerSingleton.__init__(self)
+    self.game_entities = Group()
+    self.entity_dict: Dict[Type, Group] = dict()
 
   # Sets up the entities groups
   #TODO: Free old memory
   def reset(self) -> None:
     self.game_entities = Group()
+    self.entity_dict.clear()
 
-    self.rulers = Group()
-    self.soldiers = Group()
-    self.towers = Group()
+  T = TypeVar("T", bound=GameEntity)
 
   # Adds the given entity to the main list and to the corresponding sublist
-  def register_entity(self, e: GameEntity) -> None:
+  def register_entity(self, e: T) -> None:
+    # First add to all game entities.
     self.game_entities.add(e)
 
-    if isinstance(e, Ruler):
-      self.rulers.add(e)
-    elif isinstance(e, Soldier):
-      self.soldiers.add(e)
-    elif isinstance(e, Tower):
-      self.towers.add(e)
+    # Create Sprite group if not exists.
+    if e.__class__ not in self.entity_dict.keys():
+      self.entity_dict[e.__class__] = Group()
+
+    # Finally add it to the group.
+    self.entity_dict[e.__class__].add(e)

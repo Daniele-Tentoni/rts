@@ -87,7 +87,6 @@ class EventController(EventControllerSingleton):
       self.key_events[key] = list()
 
     self.key_events[key].append(callback)
-    print(f"Registered key {key} for {callable}")
 
   # Adds a new triggered event callback to the list
   def register_trigger_event(self, condition: Callable[[], bool], callback: Callable[[], None]):

@@ -9,6 +9,7 @@ from rts.config import (
 from rts.controllers.time_controller import DELTA_TIME
 from rts.models.game_entity import GameEntity
 from rts.sprites.soldier import Soldier
+from rts.controllers.entity_controller import EntityController
 
 class Tower(GameEntity):
   """
@@ -96,13 +97,12 @@ class Tower(GameEntity):
     Returns:
       [rts.sprites.soldier.Soldier]: New Soldier created
     """
-    from rts.controllers.entity_controller import EntityController
 
     # Reference to the entity controller
     ent_cont = EntityController()
 
     # Generates one soldier at a time until limit gets reached or pool gets empty
-    while self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1] and self.soldier_gen_pool >= 1:
+    while self._reached_max_soldiers() and self.soldier_gen_pool >= 1:
       self.soldier_gen_pool -= 1
       self.soldiers_number += 1
 
@@ -112,3 +112,6 @@ class Tower(GameEntity):
         origin_radius=25,
         speed=1)
       ent_cont.register_entity(soldier)
+
+  def _reached_max_soldiers(self):
+    return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]
