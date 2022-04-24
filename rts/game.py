@@ -162,7 +162,7 @@ class Game:
       '''
 
       # Towers update
-      if Tower in self.entity_controller.entity_dict:
+      if self.entity_controller.has(Tower):
         towers = self.entity_controller.entity_dict[Tower]
         for tower in towers:
           tower.update()
@@ -181,14 +181,14 @@ class Game:
         draw.line(self.screen, TEXT_COLOR, route[0], route[1])
 
       # Soldiers updates
-      if Soldier in self.entity_controller.entity_dict:
+      if Soldier in self.entity_controller.entity_dict.keys():
         soldiers = self.entity_controller.entity_dict[Soldier]
         for soldier in soldiers:
           soldier.update()
           self.screen.blit(soldier.surf, soldier.rect)
 
       # Rulers update
-      if Ruler in self.entity_controller.entity_dict:
+      if Ruler in self.entity_controller.entity_dict.keys():
         rulers = self.entity_controller.entity_dict[Ruler]
         for ruler in rulers:
           ruler.update()
@@ -221,5 +221,5 @@ class Game:
           print("link")
           self.routes.append(future_tuple)
 
-def tower_clicked(tower, mouse) -> bool:
+def tower_clicked(tower: Tower, mouse) -> bool:
   return tower.rect.right > mouse[0] > tower.rect.left and tower.rect.bottom > mouse[1] > tower.rect.top

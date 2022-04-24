@@ -33,20 +33,22 @@ class EventController(EventControllerSingleton):
   # Goes through all registered events and runs their callbacks if conditions are met
   def handle_events(self):
     # Time events
+
     for event in get_events():
       if event.type in self.time_events and (v := self.time_events[event.type]):
-        for callback in v:
-          callback()
+        self._handle_events(v)
 
     # Key events
-    keys = key.get_pressed()
-    for k, callbacks in self.key_events.items():
-      if keys[k]:
-        for callback in callbacks:
-          callback()
+    k_pressed = key.get_pressed()
+    k_events = self.key_events.items()
+    [self._handle_events(c) for k, c in k_events if k_pressed[k]]
 
     # Triggered events
     [callback() for condition, callback in self.trigger_event if condition()]
+
+  def _handle_events(self, callbacks: List[Callable[[], None]]) -> None:
+    for callback in callbacks:
+      callback()
 
   # Adds a new event to timer schedule and return its code: max 7 events.
   def register_time_event(self, time_span: int) -> int:
