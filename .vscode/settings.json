@@ -1,8 +1,10 @@
 {
   "cSpell.words": [
     "blit",
+    "codecov",
     "mkdocs",
-    "pygame"
+    "pygame",
+    "venv"
   ],
   "files.insertFinalNewline": true
 }

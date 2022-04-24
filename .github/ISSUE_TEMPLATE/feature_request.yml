@@ -1,0 +1,34 @@
+name: Feature Request
+description: File a feature request
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: textarea
+    attributes:
+      label: Feature request description
+      description: Describe briefly your feature request in the most concise way.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Current Behavior
+      description: A concise description of the current game feature or functionality (if any exists).
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Desired Behavior
+      description: A concise description of the desired game feature or functionality.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: |
+        Links? References? Anything that will give us more context about the feature are you requesting? Are your feature already implemented in others games made with pygame or anything else?
+    validations:
+      required: false

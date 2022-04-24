@@ -6,6 +6,7 @@ from rts.config import (
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
 )
+
 from rts.game import Game
 
 def main():
