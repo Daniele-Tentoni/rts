@@ -17,6 +17,7 @@ from rts.models.game_entity import GameEntity
 from rts.controllers.entity_controller import EntityController
 from rts.controllers.event_controller import EventController
 from rts.sprites.ruler import Ruler
+from rts.sprites.soldier import Soldier
 from rts.sprites.tower import Tower
 
 class Game:
@@ -137,6 +138,7 @@ class Game:
       self.running = False
 
     self.event_controller.register_key_event(K_ESCAPE, stop_loop)
+    self.event_controller.register_time_callback(QUIT, stop_loop)
 
     # Keeps looping until exit is required
     while self.running:
@@ -160,9 +162,11 @@ class Game:
       '''
 
       # Towers update
-      for tower in self.entity_controller.towers:
-        tower.update()
-        self.screen.blit(tower.surf, tower.rect)
+      if Tower in self.entity_controller.entity_dict:
+        towers = self.entity_controller.entity_dict[Tower]
+        for tower in towers:
+          tower.update()
+          self.screen.blit(tower.surf, tower.rect)
 
       # Route updates
       if self.tower_traced is not None:
@@ -177,14 +181,18 @@ class Game:
         draw.line(self.screen, TEXT_COLOR, route[0], route[1])
 
       # Soldiers updates
-      for soldier in self.entity_controller.soldiers:
-        soldier.update()
-        self.screen.blit(soldier.surf, soldier.rect)
+      if Soldier in self.entity_controller.entity_dict:
+        soldiers = self.entity_controller.entity_dict[Soldier]
+        for soldier in soldiers:
+          soldier.update()
+          self.screen.blit(soldier.surf, soldier.rect)
 
       # Rulers update
-      for ruler in self.entity_controller.rulers:
-        ruler.update()
-        self.screen.blit(ruler.surf, ruler.rect)
+      if Ruler in self.entity_controller.entity_dict:
+        rulers = self.entity_controller.entity_dict[Ruler]
+        for ruler in rulers:
+          ruler.update()
+          self.screen.blit(ruler.surf, ruler.rect)
 
       # Renders the scene
       display.flip()
