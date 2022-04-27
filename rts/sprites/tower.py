@@ -1,5 +1,6 @@
 from datetime import datetime
 import sys
+from typing import Tuple
 from pygame import Surface
 import pygame.font as font
 
@@ -117,7 +118,12 @@ class Tower(GameEntity):
         speed=1)
       ent_cont.register_entity(soldier)
 
-    print(f"In tower")
+  def print_rect(self) -> Tuple[int, int, int, int]:
+    left = self.x + 15
+    top = self.y + 15
+    width = 10
+    height = self.soldier_gen_pool * 50
+    return [left, top, width, height]
 
   def _reached_max_soldiers(self):
     return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]
