@@ -55,7 +55,6 @@ class EntityController(metaclass=MetaSingleton):
       self.entity_dict[e.__class__] = Group()
 
     # Finally add it to the group.
-    print(f"Register a {e.__class__}")
     self.entity_dict[e.__class__].add(e)
 
   def entities(self, t: Type):
