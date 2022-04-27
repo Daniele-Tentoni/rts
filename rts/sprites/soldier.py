@@ -35,6 +35,8 @@ class Soldier(GameEntity):
     self.origin_radius = origin_radius
     self.speed = speed
 
+    self.initiative = 0
+
   # Updates the state of the instance
   def update(self) -> None:
     """
@@ -46,7 +48,10 @@ class Soldier(GameEntity):
     """
 
     # Updates the position of the instance
-    self.update_position()
+    self.initiative = self.initiative + 0.11 * DELTA_TIME
+    if self.initiative > 1:
+      self.update_position()
+      self.initiative = 0
 
   # Moves the instance in a random way
   def update_position(self) -> None:

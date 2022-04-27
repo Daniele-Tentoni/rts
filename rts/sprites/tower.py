@@ -54,7 +54,6 @@ class Tower(GameEntity):
     self.soldier_size = soldier_size
     self.level = level
     self.soldier_gen_ratio = soldier_gen_ratio
-    print(f"create tower in {self.x},{self.y}")
 
   # Updates the state of the instance
   def update(self) -> None:
@@ -71,7 +70,6 @@ class Tower(GameEntity):
     # Updates the soldiers number label
     #TODO: Soldier number counting
     self.update_soldiers_label()
-    print(f"{datetime.now()} update tower in {self.x},{self.y}")
 
   # Updates and renders the soldiers number label
   def update_soldiers_label(self) -> None:

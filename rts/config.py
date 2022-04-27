@@ -1,5 +1,5 @@
 FONT_NAME = 'Arial'
-FONT_SIZE = 15
+FONT_SIZE = 20
 
 GAME_NAME = 'Real Time Strategy'
 
