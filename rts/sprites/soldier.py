@@ -51,7 +51,7 @@ class Soldier(GameEntity):
     self.initiative = self.initiative + 0.11 * DELTA_TIME
     if self.initiative > 1:
       self.update_position()
-      self.initiative = 0
+      self.initiative = self.initiative - 1
 
   # Moves the instance in a random way
   def update_position(self) -> None:
