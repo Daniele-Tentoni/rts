@@ -1,7 +1,7 @@
 from typing import Callable, Dict, List, Tuple
-from pygame import K_ESCAPE, QUIT, USEREVENT, key
+from pygame import USEREVENT, key
 from pygame.time import set_timer
-from pygame.event import get as get_events
+from pygame.event import get as get_events, Event
 
 class EventControllerSingleton:
   _shared_state = {}
@@ -10,7 +10,7 @@ class EventControllerSingleton:
 
 class EventController(EventControllerSingleton):
   # Time events callbacks dictionary where the key is the event code
-  time_events: Dict[int, List[Callable[[], None]]] = dict()
+  time_events: Dict[int, List[Callable[[Event], None]]] = dict()
 
   # Key events callbacks dictionary where the key is the key code
   key_events: Dict[int, List[Callable[[], None]]] = dict()
@@ -25,18 +25,23 @@ class EventController(EventControllerSingleton):
   # Resets the instance by removing all events and all callbacks
   #TODO: Cancel registered events and free memory from callbacks
   def reset(self):
+    self.time_callbacks: Dict[int, int] = dict()
     self.time_event_counter = 0
     self.time_events = dict()
     self.key_events = dict()
     self.trigger_event = list()
 
   # Goes through all registered events and runs their callbacks if conditions are met
-  def handle_events(self):
+  def handle_events(self, manager):
     # Time events
 
+    # TODO: Refactor it!
+    # Each triggered event must take an event as input and check if the
+    # callback has a true result to trigger it.
     for event in get_events():
+      manager.process_events(event)
       if event.type in self.time_events and (v := self.time_events[event.type]):
-        self._handle_events(v)
+        self._handle_events(v, event)
 
     # Key events
     k_pressed = key.get_pressed()
@@ -46,11 +51,15 @@ class EventController(EventControllerSingleton):
     # Triggered events
     [callback() for condition, callback in self.trigger_event if condition()]
 
-  def _handle_events(self, callbacks: List[Callable[[], None]]) -> None:
+  def _handle_events(
+    self,
+    callbacks: List[Callable[[Event], None]],
+    *args,
+  ) -> None:
     for callback in callbacks:
-      callback()
+      event = args[0] if len(args) > 0 else None
+      callback(event)
 
-  # Adds a new event to timer schedule and return its code: max 7 events.
   def register_time_event(self, time_span: int) -> int:
     """Register a new time event.
 
@@ -63,9 +72,14 @@ class EventController(EventControllerSingleton):
     :return: the event code registered
     :rtype: int
     """
+    if len(self.time_callbacks) == 7:
+      raise Exception("Too many time callbacks")
+
+    if time_span not in self.time_callbacks.keys():
+      self.time_callbacks[time_span] = len(self.time_callbacks) + USEREVENT + 1
 
     # Adds the event to schedule
-    event_code = len(self.time_events) + USEREVENT + 1
+    event_code = self.time_callbacks[time_span]
     set_timer(event_code, time_span)
 
     # Prepares the callback list
@@ -98,7 +112,11 @@ class EventController(EventControllerSingleton):
     self.key_events[key].append(callback)
 
   # Adds a new triggered event callback to the list
-  def register_trigger_event(self, condition: Callable[[], bool], callback: Callable[[], None]):
+  def register_trigger_event(
+    self,
+    condition: Callable[[Event], bool],
+    callback: Callable[[], None]
+    ) -> None:
     self.trigger_event.append((condition, callback))
 
 # Checks whether or not a given key is pressed

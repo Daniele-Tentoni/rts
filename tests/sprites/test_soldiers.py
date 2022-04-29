@@ -1,5 +1,4 @@
 import pytest
-from rts.controllers.time_controller import DELTA_TIME
 from rts.models.game_entity import GameEntity
 
 from rts.sprites.soldier import Soldier
@@ -8,12 +7,16 @@ from rts.sprites.soldier import Soldier
 def sample_soldier() -> Soldier:
   return Soldier(GameEntity(0, 0, [0, 0, 0], [0, 0]), [0, 0], 0, 0)
 
-def test_simple_soldier_increment_initiative(sample_soldier: Soldier):
-  prev_init = sample_soldier.initiative
-  sample_soldier.update()
-  assert prev_init + 0.11 * DELTA_TIME == sample_soldier.initiative
+@pytest.fixture
+def delta() -> int:
+  return 1
 
-def test_simple_soldier_reset_initiative(sample_soldier: Soldier):
+def test_simple_soldier_increment_initiative(sample_soldier: Soldier, delta: int):
+  prev_init = sample_soldier.initiative
+  sample_soldier.update(delta=delta)
+  assert prev_init + sample_soldier.initiative_step * 1 == sample_soldier.initiative
+
+def test_simple_soldier_reset_initiative(sample_soldier: Soldier, delta: int):
   for i in range(0, 10):
-    sample_soldier.update()
+    sample_soldier.update(delta=delta)
   assert abs(sample_soldier.initiative - 0.10) < 1e-16

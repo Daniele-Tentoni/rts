@@ -2,7 +2,6 @@ from cmath import atan, cos, sin
 from math import atan2
 from random import randint
 
-from rts.controllers.time_controller import DELTA_TIME
 from rts.models.game_entity import GameEntity
 
 class Soldier(GameEntity):
@@ -36,9 +35,10 @@ class Soldier(GameEntity):
     self.speed = speed
 
     self.initiative = 0
+    self.initiative_step = 0.0011
 
   # Updates the state of the instance
-  def update(self) -> None:
+  def update(self, delta: int) -> None:
     """
     Update the soldier location.
 
@@ -48,16 +48,16 @@ class Soldier(GameEntity):
     """
 
     # Updates the position of the instance
-    self.initiative = self.initiative + 0.11 * DELTA_TIME
+    self.initiative = self.initiative + self.initiative_step * delta
     if self.initiative > 1:
-      self.update_position()
+      self.update_position(delta)
       self.initiative = self.initiative - 1
 
   # Moves the instance in a random way
-  def update_position(self) -> None:
+  def update_position(self, delta: int) -> None:
     # Generates the displacement
-    delta_x = randint(-1, 1) * self.speed * DELTA_TIME
-    delta_y = randint(-1, 1) * self.speed * DELTA_TIME
+    delta_x = randint(-1, 1) * self.speed * delta
+    delta_y = randint(-1, 1) * self.speed * delta
 
     # Updates the position of the instance
     self.x += delta_x
