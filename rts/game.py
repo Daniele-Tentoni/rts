@@ -1,16 +1,19 @@
 from random import randint
 
-from pygame import K_DOWN, K_LEFT, K_RIGHT, K_UP, Surface
+from pygame import K_DOWN, K_LEFT, K_RIGHT, K_UP, Rect, Surface
 from pygame import display, font, mouse, draw
 from pygame import (
   K_w, K_a, K_s, K_d,
   MOUSEBUTTONUP, MOUSEBUTTONDOWN,
 )
+import pygame
 from pygame.event import Event
 from pygame.locals import (
   K_ESCAPE,
   QUIT,
 )
+
+import pygame_gui
 
 from rts.config import *
 from rts.models.game_entity import GameEntity
@@ -67,6 +70,8 @@ class Game:
     self.sys_font = font.SysFont(font.get_default_font(), FONT_SIZE)
     self.rulers_number = rulers_number
 
+    self.manager = pygame_gui.UIManager(SCREEN_SIZE)
+
     # Initialization of the main entities
     self.init_rulers()
     self.init_towers()
@@ -88,7 +93,9 @@ class Game:
       y: float = randint(0, SCREEN_HEIGHT)
 
       # Creates the instance
-      ruler = Ruler(GameEntity(x, y, RULER_COLOR, RULER_SIZE), 1)
+      ruler = Ruler(
+        e=GameEntity(x, y, RULER_COLOR, RULER_SIZE),
+        speed=0.1)
 
       # Assigns the first ruler to the player by adding the movement events
       # TODO: Add arrows movement, maybe?
@@ -136,20 +143,40 @@ class Game:
 
   # Keeps computing and showing frames until exit is requested
   def game_loop(self) -> None:
+    # Take current clock as first thing
+    clock = pygame.time.Clock()
 
     # Game loop exit flag
     self.running = True
 
     # Exit event
     #TODO: Need to define event.type = QUIT
-    def stop_loop():
+    def stop_loop(*args):
       self.running = False
 
     self.event_controller.register_key_event(K_ESCAPE, stop_loop)
     self.event_controller.register_time_callback(QUIT, stop_loop)
 
+    self.hello_button = pygame_gui.elements.UIButton(
+      relative_rect=pygame.Rect((350, 275), (100, 50)),
+      text='Say Hello',
+      manager=self.manager)
+    def print_hello_def(event: Event):
+      if hasattr(event, 'ui_element') and event.ui_element == self.hello_button:
+        print('Hello World!')
+
+    self.event_controller.register_time_callback(
+      pygame_gui.UI_BUTTON_PRESSED,
+      print_hello_def
+    )
+
+    clock = pygame.time.Clock()
     # Keeps looping until exit is required
     while self.running:
+      # Calculate the current delta_time from last frame
+      # This function return the number of milliseconds from previous call
+      time_delta = clock.tick(60)
+
       # Screen cleaning
       self.screen.fill(SCREEN_COLOR)
       self.message_box.reset()
@@ -158,11 +185,10 @@ class Game:
       self.message_box.append("To conquer enemy towers, send them soldiers from your towers.")
       self.message_box.append("Do you like this message box?")
       self.message_box.append("Now I can write some arbitrary long (not well wrapped) messages inside it ;)")
-
-      #TODO: Compute DELTA_TIME
+      self.message_box.append(f"You are running on {pygame.display.get_driver()}")
 
       # Events manager
-      self.event_controller.handle_events()
+      self.event_controller.handle_events(self.manager)
       '''
         elif self.has_to_un_trace(event):
           self.stop_trace()
@@ -174,9 +200,8 @@ class Game:
       # Towers update
       if self.entity_controller.has(Tower):
         towers = self.entity_controller.entity_dict[Tower]
+        towers.update(delta=time_delta)
         for tower in towers:
-          tower.update()
-          tower.update_soldiers_label()
           self.screen.blit(tower.surf, tower.rect)
 
           rect = tower.print_rect()
@@ -195,20 +220,20 @@ class Game:
         self.screen.blit(state_label, (80, 80))
 
       for route in self.routes:
-        draw.line(self.screen, TEXT_COLOR, route[0], route[1])
+        draw.line(self.screen, TEXT_COLOR, route[0], route[1], width=2)
 
       # Soldiers updates
       if Soldier in self.entity_controller.entity_dict.keys():
         soldiers = self.entity_controller.entity_dict[Soldier]
+        soldiers.update(time_delta)
         for soldier in soldiers:
-          soldier.update()
           self.screen.blit(soldier.surf, soldier.rect)
 
       # Rulers update
       if Ruler in self.entity_controller.entity_dict.keys():
         rulers = self.entity_controller.entity_dict[Ruler]
+        rulers.update(delta=time_delta)
         for ruler in rulers:
-          ruler.update()
           self.screen.blit(ruler.surf, ruler.rect)
 
       # Messages update
@@ -216,6 +241,8 @@ class Game:
         self.message_box.update()
         self.screen.blit(self.message_box.surf, self.message_box.rect)
 
+      self.manager.update(time_delta)
+      self.manager.draw_ui(self.screen)
       # Renders the scene
       display.flip()
 

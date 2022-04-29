@@ -9,7 +9,6 @@ from rts.config import (
   TEXT_COLOR,
   LIMIT_PER_LEVEL
 )
-from rts.controllers.time_controller import DELTA_TIME
 from rts.models.game_entity import GameEntity
 from rts.sprites.soldier import Soldier
 from rts.controllers.entity_controller import EntityController
@@ -56,7 +55,7 @@ class Tower(GameEntity):
     self.soldier_gen_ratio = soldier_gen_ratio
 
   # Updates the state of the instance
-  def update(self) -> None:
+  def update(self, delta: int) -> None:
     """Update tower and her soldiers.
 
     Update the tower and the label of soldier assigned to the tower.
@@ -65,14 +64,14 @@ class Tower(GameEntity):
     # Adds soldiers to the pool if limit has not been reached
     if self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]:
       # Adds soldiers in the pool depending on the generation ratio
-      self.soldier_gen_pool += self.soldier_gen_ratio * DELTA_TIME
+      self.soldier_gen_pool += self.soldier_gen_ratio * delta
 
     # Updates the soldiers number label
     #TODO: Soldier number counting
-    self.update_soldiers_label()
+    self._update_soldiers_label()
 
   # Updates and renders the soldiers number label
-  def update_soldiers_label(self) -> None:
+  def _update_soldiers_label(self) -> None:
     """Update soldiers label inside tower.
 
     Update soldiers label content inside tower with the current length of
@@ -87,11 +86,14 @@ class Tower(GameEntity):
       True,
       TEXT_COLOR
     )
-    textrect = self.soldiers_label.get_rect(center = self.rect.center)
-    self.surf.blit(self.soldiers_label, textrect)
+    width, height = self.rect.width, self.rect.height
+    rect = self.soldiers_label.get_rect()
+    rect.centerx = width/2
+    rect.centery = height/2
+    self.surf.blit(self.soldiers_label, rect)
 
   # Generates new soldiers depending on the pool number on the same position of the tower
-  def create_soldiers(self) -> None:
+  def create_soldiers(self, *args) -> None:
     """Spawn a new soldier.
 
     Spawn a soldier near the tower, given her center coordinates. Then, add the

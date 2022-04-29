@@ -1,7 +1,6 @@
-from pygame import Surface
+from pygame import Surface, key
 
 from rts import config
-from rts.controllers.time_controller import DELTA_TIME
 from rts.models.game_entity import GameEntity
 
 class Ruler(GameEntity):
@@ -12,9 +11,6 @@ class Ruler(GameEntity):
 
   It contains method to draw it and update his position.
   """
-
-  # Speed of the ruler
-  speed: float
 
   # Constructor
   def __init__(self, e: GameEntity, speed: float) -> None:
@@ -32,16 +28,18 @@ class Ruler(GameEntity):
     self.speed = speed
 
   # Updates the state of the instance
-  def update(self) -> None:
+  def update(self, delta: int) -> None:
     """
     Move the Ruler rectangle by pressed key event.
     """
 
     # Updates the position of the instance
+    self.delta = delta
     self.update_position()
 
   # Moves the instance depending on the keys pressed
   def update_position(self) -> None:
+
     # Moves the rect of the ruler
     self.rect.left = self.x
     self.rect.top = self.y
@@ -71,16 +69,16 @@ class Ruler(GameEntity):
 
   # Right movement
   def move_right(self) -> None:
-    self.x += DELTA_TIME * self.speed
+    self.x += self.delta * self.speed
 
   # Left movement
   def move_left(self) -> None:
-    self.x += -DELTA_TIME * self.speed
+    self.x += -self.delta * self.speed
 
   # Upwards movement
   def move_up(self) -> None:
-    self.y += -DELTA_TIME * self.speed
+    self.y += -self.delta * self.speed
 
   # Downwards movement
   def move_down(self) -> None:
-    self.y += DELTA_TIME * self.speed
+    self.y += self.delta * self.speed
