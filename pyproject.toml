@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "rts"
 version = "0.1.0"
-description = ""
-authors = ["Daniele Tentoni <daniele.tentoni.1996@gmail.com>"]
+description = "Real time strategy project."
+authors = [
+  "Daniele Tentoni <daniele.tentoni.1996@gmail.com>",
+  "Andrea Nicoletti",
+  ]
 
 [tool.poetry.dependencies]
 python = "^3.9"
