@@ -1,7 +1,7 @@
-FONT_NAME = 'Arial'
+FONT_NAME = "Arial"
 FONT_SIZE = 20
 
-GAME_NAME = 'Real Time Strategy'
+GAME_NAME = "Real Time Strategy"
 
 PLAYERS_NUMBER = 1
 
@@ -17,10 +17,8 @@ TOWER_WIDTH = 25
 TOWER_HEIGHT = 25
 TOWER_SIZE = (TOWER_WIDTH, TOWER_HEIGHT)
 # Soldiers number limits per level for towers
-#TODO: Maybe change name? Not compulsory
-LIMIT_PER_LEVEL = [
-  2, 5, 10, 20, 50
-]
+# TODO: Maybe change name? Not compulsory
+LIMIT_PER_LEVEL = [2, 5, 10, 20, 50]
 
 SCREEN_COLOR = (21, 21, 21)
 SCREEN_HEIGHT = 600
