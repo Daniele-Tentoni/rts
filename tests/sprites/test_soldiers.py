@@ -17,6 +17,6 @@ def test_simple_soldier_increment_initiative(sample_soldier: Soldier, delta: int
   assert prev_init + sample_soldier.initiative_step * 1 == sample_soldier.initiative
 
 def test_simple_soldier_reset_initiative(sample_soldier: Soldier, delta: int):
-  for i in range(0, 10):
+  for i in range(0, 100):
     sample_soldier.update(delta=delta)
-  assert abs(sample_soldier.initiative - 0.10) < 1e-16
+  assert abs(sample_soldier.initiative - 0.11) < 1e-16
