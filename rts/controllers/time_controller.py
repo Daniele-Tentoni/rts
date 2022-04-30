@@ -3,4 +3,4 @@
 
 # Computes the delta time. To be called one per frame
 def compute_delta_time():
-  pass
+    pass

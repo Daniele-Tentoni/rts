@@ -15,8 +15,12 @@ mypy = "^0.942"
 pygame-gui = "^0.6.4"
 
 [tool.poetry.dev-dependencies]
+black = "^22.3.0"
 pytest = "^7.0"
 pytest-cov = "^3.0.0"
+
+[tool.black]
+line-length = 79
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
