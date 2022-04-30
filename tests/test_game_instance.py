@@ -35,7 +35,7 @@ def test_simple_init_rulers(sample_controller: EntityController):
   """
   pygame.init()
   pygame.font.init()
-  game = Game(None)
+  game = Game(None, None)
   rulers = sample_controller.entity_dict[Ruler]
   assert len(rulers) == 2
   del game
@@ -52,7 +52,7 @@ def test_more_init_rulers(npc):
   pygame.init()
   pygame.font.init()
   controller = EntityController()
-  game = Game(None, 1 + npc)
+  game = Game(None, None, 1 + npc)
   [print(f"C: {x}") for x in controller.entity_dict.keys()]
   assert len(controller.entity_dict[Ruler]) == npc + 1
   del controller
