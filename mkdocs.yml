@@ -19,5 +19,6 @@ nav:
       - "Developers": "developers/index.md"
       - "Getting started": "developers/getting_started.md"
       - "Unit testing": "developers/unit_testing.md"
+      - "Roadmap": "developers/roadmap.md"
 
 theme: readthedocs
