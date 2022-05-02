@@ -89,7 +89,6 @@ class Game:
         # Initialization of the main entities
         self.init_rulers()
         self.init_towers()
-        self.init_messages()
 
         self.clock_init_step = 1
 
@@ -163,10 +162,6 @@ class Game:
                 tower.create_soldiers,
             )
 
-    def init_messages(self) -> None:
-        self.message_box = MessageBox()
-        self.entity_controller.register_entity(self.message_box)
-
     # Keeps computing and showing frames until exit is requested
     def game_loop(self) -> None:
         # Take current clock as first thing
@@ -200,6 +195,8 @@ class Game:
                 hasattr(event, "ui_element")
                 and event.ui_element == self.hello_button
             ):
+                # This setting has to be moved in the settings window
+                set_fps_label_visibility(not bool(get_fps_label_visibility()))
                 print("Hello World!")
 
         self.event_controller.register_time_callback(
@@ -224,6 +221,7 @@ class Game:
                 "top": "bottom",
                 "bottom": "bottom",
             },
+            visible=get_fps_label_visibility(),
         )
 
         clock = pygame.time.Clock()
@@ -244,16 +242,6 @@ class Game:
 
             # Screen cleaning
             self.screen.fill(SCREEN_COLOR)
-            self.message_box.reset()
-
-            # System label rendering
-            self.message_box.append("Do you like this message box?")
-            self.message_box.append(
-                "Now I can write some arbitrary long (not well wrapped) messages inside it ;)"
-            )
-            self.message_box.append(
-                f"You are running on {pygame.display.get_driver()}"
-            )
 
             # Events manager
             self.event_controller.handle_events(self.manager)
@@ -321,11 +309,6 @@ class Game:
                 rulers.update(delta=time_delta)
                 for ruler in rulers:
                     self.screen.blit(ruler.surf, ruler.rect)
-
-            # Messages update
-            if self.message_box.has_messages():
-                self.message_box.update()
-                self.screen.blit(self.message_box.surf, self.message_box.rect)
 
             self.manager.update(time_delta)
             self.manager.draw_ui(self.screen)

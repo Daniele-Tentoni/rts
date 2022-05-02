@@ -1,3 +1,34 @@
+"""Contains all configurations for the RTS project.
+
+Use this module to load and save custom configurations or retrieve the recommended ones.
+
+Add new immutable configurations as Literals like::
+    FONT_NAME = "Arial"
+    RULER_COLOR = (255, 0, 255)
+
+Add new mutable configurations following those steps:
+
+1. Add new default configuration, ordered alphabetical and grouped semantically::
+    defaults = {...
+        "key": "value",
+    }
+
+2. Create `get_` and `set_` methods::
+    def get_key() -> Type:
+        return _get(key)
+
+    def set_key(value: Type) -> None:
+        _set(key, value)
+
+.. note:
+  If you retrieve a default configuration and you try to save it without changes, it will not be stored in the stored custom configuration file.
+"""
+
+import os
+from typing import Any
+import toml
+from xdg import xdg_config_home
+
 FONT_NAME = "Arial"
 FONT_SIZE = 20
 
@@ -31,27 +62,37 @@ SOLDIER_HEIGHT = 10
 SOLDIER_WIDTH = 10
 SOLDIER_SIZE = (SOLDIER_WIDTH, SOLDIER_HEIGHT)
 
-import os
-from pathlib import Path
-from typing import Any
-import toml
+# Multiplatform way to get current user's home directory (https://stackoverflow.com/a/53222876/10220116)
+config_path = os.path.join(
+    os.environ.get("APPDATA") or xdg_config_home(), "rts"
+)
+config_file = os.path.join(config_path, "settings.toml")
+"""File path to settings.toml"""
 
 
-# Multiplatform way to get current user's home directory (https://stackoverflow.com/a/4028943/10220116)
-home = str(Path.home())
-rts_dot_dir = os.path.join(home, ".rts")
-settings_path = os.path.join(rts_dot_dir, "settings.toml")
-print("Imported settings")
-try:
-    parsed = toml.load(settings_path)
-except FileNotFoundError:
-    if not os.path.exists(rts_dot_dir):
-        os.mkdir(rts_dot_dir)
+def _load_configs() -> dict:
+    """Loads settings at runtime
 
-    with open(settings_path, "w+", encoding="utf-8") as w:
-        toml.dump(dict(), w)
+    Create the settings file if is the first time running the application and calling this module.
+    """
+    try:
+        return toml.load(config_file)
+    except FileNotFoundError:
+        if not os.path.exists(config_path):
+            os.makedirs(config_path, exist_ok=True)
 
-    parsed = dict()
+        empty_dict = dict()
+        _save_configs(empty_dict, create_if_missing=True)
+        return empty_dict
+
+
+def _save_configs(configs: dict, create_if_missing: bool = False) -> None:
+    """Save the current settings writing in the dotfile"""
+    mode = "w+" if create_if_missing else "w"
+    with open(config_file, mode, encoding="utf-8") as w:
+        print(f"Write {parsed}")
+        toml.dump(configs, w)
+
 
 defaults = {
     "advanced": {
@@ -60,6 +101,22 @@ defaults = {
         )  # pygame_gui require UILabel visibility as int
     }
 }
+"""Default configurations.
+
+.. warning:
+  Don't change it at runtime if you wanna keep your updated configurations.
+"""
+
+# Loads config when importing the module
+parsed = _load_configs()
+"""
+Currently parsed configs.
+
+.. warning:
+    Don't change it at runtime if you wanna keep your updated configurations.
+"""
+
+print("Imported settings")
 
 if parsed:
     print(f"def: {defaults}")
@@ -119,13 +176,7 @@ def _set(setting: str, value: Any):
 
         p = p[part]
         print(f"Try to set {p}")
+
     p[parts[len(parts) - 1]] = value
     print(f"Lets write {p}")
-    _save()
-
-
-def _save():
-    """Save the current settings writing in the dotfile"""
-    with open(settings_path, "w", encoding="utf-8") as w:
-        print(f"Write {parsed}")
-        toml.dump(parsed, w)
+    _save_configs(parsed)
