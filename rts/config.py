@@ -29,6 +29,9 @@ from typing import Any
 import toml
 from xdg import xdg_config_home
 
+# _called_from_test = False
+"""Support for pytest mocking"""
+
 FONT_NAME = "Arial"
 FONT_SIZE = 20
 
@@ -75,6 +78,7 @@ def _load_configs() -> dict:
 
     Create the settings file if is the first time running the application and calling this module.
     """
+    print("loading")
     try:
         return toml.load(config_file)
     except FileNotFoundError:
@@ -96,9 +100,8 @@ def _save_configs(configs: dict, create_if_missing: bool = False) -> None:
 
 defaults = {
     "advanced": {
-        "fps_label_visibility": int(
-            True
-        )  # pygame_gui require UILabel visibility as int
+        # pygame_gui require UILabel visibility as int
+        "fps_label_visibility": int(True)
     }
 }
 """Default configurations.
@@ -108,7 +111,7 @@ defaults = {
 """
 
 # Loads config when importing the module
-parsed = _load_configs()
+parsed = dict()  # if _called_from_test else _load_configs()
 """
 Currently parsed configs.
 
