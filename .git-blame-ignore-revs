@@ -1,2 +1,5 @@
 # Migration to black code style
 1ecb04aef3aa907759603e82d8d6196095cf78a7
+
+# Run black on test first time
+f81e1bd5e232fea47d691d3407d5786a9ec90142
