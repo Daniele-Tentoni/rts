@@ -8,6 +8,7 @@ from rts.config import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
 )
+import rts.config
 
 from rts.game import Game
 
@@ -31,6 +32,7 @@ def main():
     pygame.display.set_caption(GAME_NAME)
     screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
     manager = pygame_gui.UIManager(SCREEN_SIZE)
+    rts.config.parsed = rts.config._load_configs()
     game = Game(screen, manager)
 
     # Game loop
