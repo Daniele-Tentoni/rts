@@ -78,7 +78,6 @@ def _load_configs() -> dict:
 
     Create the settings file if is the first time running the application and calling this module.
     """
-    print("loading")
     try:
         return toml.load(config_file)
     except FileNotFoundError:
@@ -94,7 +93,6 @@ def _save_configs(configs: dict, create_if_missing: bool = False) -> None:
     """Save the current settings writing in the dotfile"""
     mode = "w+" if create_if_missing else "w"
     with open(config_file, mode, encoding="utf-8") as w:
-        print(f"Write {parsed}")
         toml.dump(configs, w)
 
 
@@ -118,12 +116,6 @@ Currently parsed configs.
 .. warning:
     Don't change it at runtime if you wanna keep your updated configurations.
 """
-
-print("Imported settings")
-
-if parsed:
-    print(f"def: {defaults}")
-    print(f"par: {parsed}")
 
 
 def get_fps_label_visibility() -> bool:
@@ -171,15 +163,12 @@ def _set(setting: str, value: Any):
     :type value: Any
     """
     parts = setting.split(".")
-    print(f"parts {parts}")
     p = parsed
     for part in parts[: len(parts) - 1]:
         if part not in p.keys():
             p[part] = dict()
 
         p = p[part]
-        print(f"Try to set {p}")
 
     p[parts[len(parts) - 1]] = value
-    print(f"Lets write {p}")
     _save_configs(parsed)

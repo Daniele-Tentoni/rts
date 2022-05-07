@@ -275,14 +275,11 @@ class Game:
                 towers.update(delta=time_delta)
                 for tower in towers:
                     self.screen.blit(tower.surf, tower.rect)
-
-                    rect = tower.print_rect()
-                    s_rect = draw.rect(
-                        self.screen, TEXT_COLOR, rect, border_radius=2
+                    pygame.draw.rect(
+                        self.screen, TEXT_COLOR, tower.s_gen_rect, border_radius=2
                     )
                     mouse_pos = mouse.get_pos()
-                    if s_rect.collidepoint(mouse_pos[0], mouse_pos[1]):
-                        self.message_box.append("Tower soldier generation.")
+                    tower.update_tooltip(mouse_pos, self.manager)
 
             # Route updates
             if self.tower_traced is not None:
