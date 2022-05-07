@@ -69,6 +69,7 @@ SOLDIER_SIZE = (SOLDIER_WIDTH, SOLDIER_HEIGHT)
 config_path = os.path.join(
     os.environ.get("APPDATA") or xdg_config_home(), "rts"
 )
+"""Dir path to the RTS config directory"""
 config_file = os.path.join(config_path, "settings.toml")
 """File path to settings.toml"""
 
@@ -119,10 +120,12 @@ Currently parsed configs.
 
 
 def get_fps_label_visibility() -> bool:
+    """Get the value of the advanced.fps_label_visibility setting"""
     return _get("advanced.fps_label_visibility")
 
 
 def set_fps_label_visibility(value: bool):
+    """Set the value of the advanced.fps_label_visibility setting"""
     _set("advanced.fps_label_visibility", value)
 
 
