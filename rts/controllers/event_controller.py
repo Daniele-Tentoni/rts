@@ -6,6 +6,7 @@ from typing import Callable, Dict, List, Tuple
 from pygame import USEREVENT, key
 from pygame.time import set_timer
 from pygame.event import get as get_events, Event
+from pygame_gui import UIManager
 
 # TODO: Use only one singleton metaclass (from entity controller).
 class EventControllerSingleton:
@@ -53,7 +54,7 @@ class EventController(EventControllerSingleton):
         self.key_events = dict()
         self.trigger_event = list()
 
-    def handle_events(self, manager):
+    def handle_events(self, manager: UIManager):
         """Goes through all registered events and runs their callbacks if conditions are met
 
         This method require a manager as input since the UIManager from pygame_gui
@@ -67,8 +68,7 @@ class EventController(EventControllerSingleton):
         self.event_controller.handle_events(self.manager)
 
         .. note::
-            Invoking this method more than one time in the same game_loop will fire
-            a second time key events and triggered ones, but not pygame events!
+            Invoking this method more than one time in the same game_loop will fire a second time key events and triggered ones, but not pygame events!
         """
         # Time events
 
@@ -76,7 +76,16 @@ class EventController(EventControllerSingleton):
         # Each triggered event must take an event as input and check if the
         # callback has a true result to trigger it.
         for event in get_events():
-            manager.process_events(event)
+            # If event is managed by pygame_ui, skip to next event.
+            try:
+                if manager.process_events(event):
+                    continue
+            except AttributeError as attr_err:
+                if hasattr(event, "ui_element"):
+                    print(
+                        f"Event {event} from {event.ui_element} was rejected due to {attr_err}"
+                    )
+
             if event.type in self.time_events and (
                 v := self.time_events[event.type]
             ):

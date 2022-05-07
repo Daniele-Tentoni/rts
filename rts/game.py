@@ -224,6 +224,13 @@ class Game:
             visible=get_fps_label_visibility(),
         )
 
+        self.new_player_message = pygame_gui.windows.UIMessageWindow(
+            rect=Rect(20, 20, 250, 160),
+            html_message="Welcome to RTS",
+            manager=self.manager,
+            window_title="Welcome",
+        )
+
         clock = pygame.time.Clock()
         clock_init = 0.0
         # Keeps looping until exit is required
@@ -255,20 +262,6 @@ class Game:
 
             mouse_pos = mouse.get_pos()
 
-            """if self.hello_button.rect.collidepoint(mouse_pos[0], mouse_pos[1]):
-        if self.tower_tooltip is None or not self.tower_tooltip.alive():
-          self.tower_tooltip = pygame_gui.elements.UITooltip(
-            "Say hello",
-            [0, 32],
-            self.manager,
-            self.hello_button,
-          )
-          pos = pygame.math.Vector2((self.hello_button.rect.left, self.hello_button.rect.bottom))
-          self.tower_tooltip.find_valid_position(pos)
-      else:
-        if self.tower_tooltip is not None and self.tower_tooltip.alive():
-          self.tower_tooltip.kill()"""
-
             # Towers update
             if self.entity_controller.has(Tower):
                 towers = self.entity_controller.entity_dict[Tower]
@@ -276,15 +269,16 @@ class Game:
                 for tower in towers:
                     self.screen.blit(tower.surf, tower.rect)
                     pygame.draw.rect(
-                        self.screen, TEXT_COLOR, tower.s_gen_rect, border_radius=2
+                        self.screen,
+                        TEXT_COLOR,
+                        tower.s_gen_rect,
+                        border_radius=2,
                     )
-                    mouse_pos = mouse.get_pos()
                     tower.update_tooltip(mouse_pos, self.manager)
 
             # Route updates
             if self.tower_traced is not None:
                 tower_pos = self.tower_traced.rect.center
-                mouse_pos = mouse.get_pos()
                 draw.line(self.screen, TEXT_COLOR, tower_pos, mouse_pos)
                 state_string = f"Tower click {self.tower_traced.rect.right}."
                 state_label = self.sys_font.render(state_string, 1, TEXT_COLOR)
