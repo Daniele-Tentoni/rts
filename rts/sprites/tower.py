@@ -1,8 +1,8 @@
-from datetime import datetime
-import sys
 from typing import Tuple
 from pygame import Surface
+import pygame
 import pygame.font as font
+import pygame_gui
 
 from rts.config import FONT_SIZE, TEXT_COLOR, LIMIT_PER_LEVEL
 from rts.models.game_entity import GameEntity
@@ -33,6 +33,11 @@ class Tower(GameEntity):
     # Soldiers number label
     soldiers_label: Surface
 
+    s_gen_rect: pygame.Rect
+    """Soldier generation Rect.
+
+    Show the progress of the generation of the next soldier to spawn near the tower."""
+
     # Constructor
     def __init__(
         self,
@@ -56,6 +61,7 @@ class Tower(GameEntity):
         self.soldier_size = soldier_size
         self.level = level
         self.soldier_gen_ratio = soldier_gen_ratio
+        self.tower_tooltip: pygame_gui.elements.UITooltip = None
 
     # Updates the state of the instance
     def update(self, delta: int) -> None:
@@ -64,14 +70,17 @@ class Tower(GameEntity):
         Update the tower and the label of soldier assigned to the tower.
         """
 
-        # Adds soldiers to the pool if limit has not been reached
-        if self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]:
-            # Adds soldiers in the pool depending on the generation ratio
-            self.soldier_gen_pool += self.soldier_gen_ratio * delta
-
         # Updates the soldiers number label
         # TODO: Soldier number counting
+        self._update_soldiers_pool(delta)
         self._update_soldiers_label()
+        self._update_soldiers_rect()
+
+    def _update_soldiers_pool(self, delta: int) -> None:
+        """Adds soldiers to the pool if limit has not been reached."""
+        if self._reached_max_soldiers():
+            # Adds soldiers in the pool depending on the generation ratio
+            self.soldier_gen_pool += self.soldier_gen_ratio * delta
 
     # Updates and renders the soldiers number label
     def _update_soldiers_label(self) -> None:
@@ -93,6 +102,37 @@ class Tower(GameEntity):
         rect.centery = height / 2
         self.surf.blit(self.soldiers_label, rect)
 
+    def _update_soldiers_rect(self) -> None:
+        left = self.x + 15
+        top = self.y + 15
+        width = 10
+        height = self.soldier_gen_pool * 25
+        self.s_gen_rect = pygame.Rect(left, top, width, height)
+
+    def update_tooltip(self, mouse_pos: Tuple[int, int], manager: pygame_gui.UIManager) -> None:
+        collision = self.s_gen_rect.collidepoint(mouse_pos[0], mouse_pos[1])
+        if not collision and (
+            self.tower_tooltip is not None
+            and self.tower_tooltip.alive()
+        ):
+            self.tower_tooltip.kill()
+        elif collision and (
+            self.tower_tooltip is None
+            or not self.tower_tooltip.alive()
+        ):
+            self.tower_tooltip = pygame_gui.elements.UITooltip(
+                "Next soldier generation progress",
+                [0, 16],
+                manager,
+            )
+            pos = pygame.math.Vector2(
+                (
+                    self.s_gen_rect.left,
+                    self.s_gen_rect.top,
+                )
+            )
+            self.tower_tooltip.find_valid_position(pos)
+
     # Generates new soldiers depending on the pool number on the same position of the tower
     def create_soldiers(self, *args) -> None:
         """Spawn a new soldier.
@@ -100,8 +140,8 @@ class Tower(GameEntity):
         Spawn a soldier near the tower, given her center coordinates. Then, add the
         new sprite to soldier tower sprite group and return it.
 
-        Returns:
-          [rts.sprites.soldier.Soldier]: New Soldier created
+        :return: New Soldier created
+        :rtype: rts.sprites.soldier.Soldier
         """
 
         # Reference to the entity controller
@@ -121,13 +161,6 @@ class Tower(GameEntity):
                 speed=1,
             )
             ent_cont.register_entity(soldier)
-
-    def print_rect(self) -> Tuple[int, int, int, int]:
-        left = self.x + 15
-        top = self.y + 15
-        width = 10
-        height = self.soldier_gen_pool * 25
-        return [left, top, width, height]
 
     def _reached_max_soldiers(self):
         return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]
