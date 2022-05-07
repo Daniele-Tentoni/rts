@@ -53,22 +53,28 @@ def test_custom_setting_different_from_default(mocked_configs: dict):
     current_setting = rts.config._get("advanced.fps_label_visibility")
     assert default_setting != current_setting
 
+
 @patch("toml.load")
 @patch("os.path.exists")
 @patch("rts.config._save_configs")
-def test_missing_config_file(save: MagicMock, exists: MagicMock, load: MagicMock):
-    load.side_effect = FileNotFoundError('mocked')
+def test_missing_config_file(
+    save: MagicMock, exists: MagicMock, load: MagicMock
+):
+    load.side_effect = FileNotFoundError("mocked")
     exists.return_value = True
     empty_dict = dict()
     assert rts.config._load_configs() == empty_dict
     save.assert_called_once_with(empty_dict, create_if_missing=True)
 
+
 @patch("toml.load")
 @patch("os.path.exists")
 @patch("os.makedirs")
 @patch("rts.config._save_configs")
-def test_missing_config_dir(save: MagicMock, dirs: MagicMock, exists: MagicMock, load: MagicMock):
-    load.side_effect = FileNotFoundError('mocked')
+def test_missing_config_dir(
+    save: MagicMock, dirs: MagicMock, exists: MagicMock, load: MagicMock
+):
+    load.side_effect = FileNotFoundError("mocked")
     exists.return_value = False
     rts.config._load_configs()
     dirs.assert_called_once_with(rts.config.config_path, exist_ok=True)

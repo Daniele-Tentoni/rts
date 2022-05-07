@@ -109,16 +109,16 @@ class Tower(GameEntity):
         height = self.soldier_gen_pool * 25
         self.s_gen_rect = pygame.Rect(left, top, width, height)
 
-    def update_tooltip(self, mouse_pos: Tuple[int, int], manager: pygame_gui.UIManager) -> None:
+    def update_tooltip(
+        self, mouse_pos: Tuple[int, int], manager: pygame_gui.UIManager
+    ) -> None:
         collision = self.s_gen_rect.collidepoint(mouse_pos[0], mouse_pos[1])
         if not collision and (
-            self.tower_tooltip is not None
-            and self.tower_tooltip.alive()
+            self.tower_tooltip is not None and self.tower_tooltip.alive()
         ):
             self.tower_tooltip.kill()
         elif collision and (
-            self.tower_tooltip is None
-            or not self.tower_tooltip.alive()
+            self.tower_tooltip is None or not self.tower_tooltip.alive()
         ):
             self.tower_tooltip = pygame_gui.elements.UITooltip(
                 "Next soldier generation progress",
