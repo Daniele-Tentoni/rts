@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    name: Test using Python ${{ matrix.python-version }}
     strategy:
       matrix:
         python-version: ["3.9", "3.10"]
