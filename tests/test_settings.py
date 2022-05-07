@@ -1,7 +1,8 @@
+from typing import Any, Dict
 import pytest
 import rts.config
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, mock_open, patch
 
 
 @pytest.fixture
@@ -79,3 +80,32 @@ def test_missing_config_dir(
     rts.config._load_configs()
     dirs.assert_called_once_with(rts.config.config_path, exist_ok=True)
     save.assert_called_once_with(dict(), create_if_missing=True)
+
+@patch("toml.dump")
+@patch("builtins.open", new_callable=mock_open)
+def test_save_configs(open: MagicMock, dump: MagicMock):
+    configs = {}
+    rts.config._save_configs(configs, True)
+    open.assert_called_once_with(rts.config.config_file, mode="w+", encoding='utf-8')
+    dump.assert_called_once_with(configs, open.return_value)
+
+@pytest.mark.parametrize("starting, expected, update, value", [({},{'test': 'testa'}, 'test', 'testa'),({},{'test': {'test2': 'testa'}}, 'test.test2', 'testa'),({
+        'test': {
+            'test2' : {
+                'test3': 'testx',
+                'test4': 'testy'
+            }
+        }
+    },{
+        'test': {
+            'test2' : {
+                'test3': 'testz',
+                'test4': 'testy'
+            }
+        }
+    }, 'test.test2.test3', 'testz')])
+@patch("rts.config._save_configs")
+def test_save_set(saver: MagicMock, starting: Dict[str, Any], expected: Dict[str, Any], update: str, value: str):
+    rts.config.parsed = starting
+    rts.config._set(update, value)
+    saver.assert_called_once_with(expected)
