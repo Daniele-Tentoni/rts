@@ -36,6 +36,7 @@ FONT_NAME = "Arial"
 FONT_SIZE = 20
 
 GAME_NAME = "Real Time Strategy"
+GAME_NICK = "RTS"
 
 PLAYERS_NUMBER = 1
 

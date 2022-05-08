@@ -1,6 +1,6 @@
 from pygame import Surface, key
 
-from rts import config
+import rts.config
 from rts.models.game_entity import GameEntity
 
 
@@ -48,13 +48,13 @@ class Ruler(GameEntity):
         # Keeps the rectangle within screen limits
         if self.rect.left < 0:
             self.rect.left = 0
-        elif self.rect.right > config.SCREEN_WIDTH:
-            self.rect.right = config.SCREEN_WIDTH
+        elif self.rect.right > rts.config.SCREEN_WIDTH:
+            self.rect.right = rts.config.SCREEN_WIDTH
 
         if self.rect.top <= 0:
             self.rect.top = 0
-        elif self.rect.bottom >= config.SCREEN_HEIGHT:
-            self.rect.bottom = config.SCREEN_HEIGHT
+        elif self.rect.bottom >= rts.config.SCREEN_HEIGHT:
+            self.rect.bottom = rts.config.SCREEN_HEIGHT
 
     # Draws the rect associated to the instance
     def draw(self, screen: Surface) -> None:

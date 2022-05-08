@@ -2,15 +2,8 @@ import os
 import pygame
 import pygame_gui
 
-from rts.config import (
-    GAME_NAME,
-    SCREEN_SIZE,
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT,
-)
 import rts.config
-
-from rts.game import Game
+import rts.game
 
 
 def main():
@@ -29,14 +22,14 @@ def main():
         exit(os.EX_DATAERR)
 
     # Initial setup of the game
-    pygame.display.set_caption(GAME_NAME)
-    screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-    manager = pygame_gui.UIManager(SCREEN_SIZE)
+    pygame.display.set_caption(rts.config.GAME_NAME)
+    screen = pygame.display.set_mode(rts.config.SCREEN_SIZE)
+    manager = pygame_gui.UIManager(rts.config.SCREEN_SIZE)
     rts.config.parsed = rts.config._load_configs()
-    game = Game(screen, manager)
+    instance = rts.game.Game(screen, manager)
 
     # Game loop
-    game.game_loop()
+    instance.game_loop()
 
     # Releases imported modules
     pygame.font.quit()
