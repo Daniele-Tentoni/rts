@@ -24,25 +24,28 @@ from rts.config import *
 from rts.models.game_entity import GameEntity
 from rts.controllers.entity_controller import EntityController
 from rts.controllers.event_controller import EventController
-from rts.models.message_box import MessageBox
 from rts.sprites.ruler import Ruler
 from rts.sprites.soldier import Soldier
 from rts.sprites.tower import Tower
 
 
 class Game:
+    """Game instance."""
+
     running: bool
+    """Define if the game has to go through the loop or exit it and stop his execution."""
+
     clock_init_step: float
     """How many times update fps counter."""
 
     routes: list[tuple[tuple[float, float], tuple[float, float]]]
     tower_traced: Tower
 
-    # Reference to the controllers
     entity_controller: EntityController
-    event_controller: EventController
+    """Controller of all entities in the game."""
 
-    message_box: MessageBox
+    event_controller: EventController
+    """Controller of all events in the game."""
 
     # Screen properties used during rendering
     screen: Surface
@@ -51,7 +54,6 @@ class Game:
     # Number of players in the game
     rulers_number: int
 
-    # Constructor
     def __init__(
         self,
         screen: Surface,
