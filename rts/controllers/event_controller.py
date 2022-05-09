@@ -8,15 +8,10 @@ from pygame.time import set_timer
 from pygame.event import get as get_events, Event
 from pygame_gui import UIManager
 
-# TODO: Use only one singleton metaclass (from entity controller).
-class EventControllerSingleton:
-    _shared_state = {}
-
-    def __init__(self):
-        self.__dict__ = self._shared_state
+from rts.controllers.meta_singleton import MetaSingleton
 
 
-class EventController(EventControllerSingleton):
+class EventController(metaclass=MetaSingleton):
     """Controller to manage registration and invocation of events
 
     This will handle for you the storage and the management of events from the
@@ -33,7 +28,7 @@ class EventController(EventControllerSingleton):
     """
 
     # Time events callbacks dictionary where the key is the event code
-    time_events: Dict[int, List[Callable[[Event], None]]] = dict()
+    time_events: Dict[int, List[Callable[[Event], None]]]
 
     # Key events callbacks dictionary where the key is the key code
     key_events: Dict[int, List[Callable[[], None]]] = dict()
@@ -43,7 +38,7 @@ class EventController(EventControllerSingleton):
 
     # Constructor
     def __init__(self):
-        EventControllerSingleton.__init__(self)
+        self.time_events = {}
 
     # Resets the instance by removing all events and all callbacks
     # TODO: Cancel registered events and free memory from callbacks
