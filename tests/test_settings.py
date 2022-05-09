@@ -117,3 +117,12 @@ def test_save_set(
     rts.config.parsed = starting
     rts.config._set(update, value)
     saver.assert_called_once_with(expected)
+
+
+def test_get_fps_label_visibility(mocked_configs: MagicMock):
+    assert not rts.config.get_fps_label_visibility()
+
+
+def test_set_fps_label_visibility(mocked_configs: MagicMock):
+    rts.config.set_fps_label_visibility(True)
+    assert rts.config.get_fps_label_visibility()
