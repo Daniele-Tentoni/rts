@@ -1,73 +1,67 @@
-from random import sample
 import pytest
-from rts.controllers.state_controller import State, StateController
+import rts.state
+from rts.state import (
+    default,
+    get as get_state,
+    set as set_state,
+)
 
 
-def test_default_state():
-    print(f"{State._field_defaults}")
-    assert State() == (False, False)
-    assert State().set == False
-    assert State().val == False
-    assert State(True) == (True, False)
-    assert State(val=1) == (False, 1)
-    assert State(True, "a") == (True, "a")
+@pytest.fixture(name="sample_state", autouse=True)
+def sample_state_fixture(request: pytest.FixtureRequest):
+    def clean_sets():
+        rts.state.sets = default()
 
-
-@pytest.fixture(name="sample_state_controller")
-def sample_state_controller() -> StateController:
-    c = StateController()
-    yield StateController()
-    del c
+    request.addfinalizer(clean_sets)
+    return rts.state.sets
 
 
 @pytest.mark.parametrize("name", [("mouse_pos"), ("mouse_pressed")])
-def test_init_some_values_false(
-    name: str, sample_state_controller: StateController
-):
+def test_init_some_values_false(name: str):
     with pytest.raises(Exception) as ex:
-        sample_state_controller.get(name)
+        get_state(name)
     assert str(ex.value) == "Not set for this frame"
 
 
-def test_set(sample_state_controller: StateController):
+def test_set():
     name = "mouse_pos"
-    set1, val1 = sample_state_controller.sets[name]
+    set1, val1 = rts.state.sets[name]
     assert set1 == False
     assert val1 == False
-    sample_state_controller.set(name, (0, 0))
-    set2, val2 = sample_state_controller.sets.get(name)
+    set_state(name, (0, 0))
+    set2, val2 = rts.state.sets.get(name)
     assert set2 == True
     assert val2 == (0, 0)
 
 
-def test_get_before_set(sample_state_controller: StateController):
+def test_get_before_set():
     name = "mouse_pos"
     with pytest.raises(Exception) as ex:
-        sample_state_controller.get(name)
+        get_state(name)
     assert str(ex.value) == "Not set for this frame"
 
 
-def test_get_after_set(sample_state_controller: StateController):
+def test_get_after_set():
     name = "mouse_pressed"
     value = (1, 0, 0)
-    sample_state_controller.set(name, value)
-    assert sample_state_controller.get(name) == value
+    set_state(name, value)
+    assert get_state(name) == value
 
 
-def test_already_set(sample_state_controller: StateController):
+def test_already_set():
     name = "screen_size"
     value = (100, 100)
-    sample_state_controller.set(name, value)
+    set_state(name, value)
     with pytest.raises(Exception) as ex:
-        sample_state_controller.set(name, value)
+        set_state(name, value)
     assert str(ex.value) == "Already set for this frame"
 
 
-def test_reset(sample_state_controller: StateController):
+def test_reset():
     name = "mouse_pos"
     value = (0, 0)
-    sample_state_controller.set(name, value)
-    sample_state_controller.reset()
+    set_state(name, value)
+    rts.state.reset()
     with pytest.raises(Exception) as ex:
-        sample_state_controller.get(name)
+        get_state(name)
     assert str(ex.value) == "Not set for this frame"
