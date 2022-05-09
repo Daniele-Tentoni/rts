@@ -125,7 +125,11 @@ def get_fps_label_visibility() -> bool:
 
 
 def set_fps_label_visibility(value: bool):
-    """Set the value of the advanced.fps_label_visibility setting"""
+    """Set the value of the advanced.fps_label_visibility setting
+
+    :param value: value to set the fps label visibility setting
+    :type value: bool
+    """
     _set("advanced.fps_label_visibility", value)
 
 
@@ -136,7 +140,7 @@ def _get(setting: str):
 
     :param setting: setting key to read
     :type setting: str
-    :return: setting value
+    :return: the required setting value
     :rtype: Any
 
     .. note:
