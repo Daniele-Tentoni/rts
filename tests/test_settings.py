@@ -123,6 +123,10 @@ def test_get_fps_label_visibility(mocked_configs: MagicMock):
     assert not rts.config.get_fps_label_visibility()
 
 
-def test_set_fps_label_visibility(mocked_configs: MagicMock):
+@patch("toml.dump")
+@patch("builtins.open", new_callable=mock_open)
+def test_set_fps_label_visibility(
+    open: MagicMock, dump: MagicMock, mocked_configs: MagicMock
+):
     rts.config.set_fps_label_visibility(True)
     assert rts.config.get_fps_label_visibility()
