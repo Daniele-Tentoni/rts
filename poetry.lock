@@ -625,13 +625,13 @@ files = [
 
 [[package]]
 name = "pygame-gui"
-version = "0.6.4"
+version = "0.6.8"
 description = "A GUI module for pygame 2"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "pygame_gui-0.6.4.tar.gz", hash = "sha256:6c765dde8bfa2d0314c5f281fe006d2519b3ed6aebbc43e0aa8b0a5d91ba9992"},
+    {file = "pygame_gui-0.6.8-py3-none-any.whl", hash = "sha256:c7009ea9fea9f7850c51501c18c6ae8dc3bbfe8795e32659dc339021ae4f46c2"},
 ]
 
 [package.dependencies]
