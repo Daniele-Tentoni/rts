@@ -1,7 +1,11 @@
 from pygame import Surface, key
+import pygame
+import pygame.sprite
 
 import rts.config
+from rts.controllers.entity_controller import EntityController
 from rts.models.game_entity import GameEntity
+from rts.sprites.soldier import Soldier
 
 
 class Ruler(GameEntity):
@@ -37,6 +41,24 @@ class Ruler(GameEntity):
         # Updates the position of the instance
         self.delta = delta
         self.update_position()
+        entity_controller = EntityController()
+        if Soldier in entity_controller.entity_dict.keys():
+            soldiers = entity_controller.entity_dict[Soldier]
+            self.check_soldier_collision(soldiers)
+    
+    def check_soldier_collision(self, soldiers: pygame.sprite.Group):
+        """
+        Check if any soldier collide with this ruler.
+        
+        If any soldier collide with a ruler, could appens those actions:
+        1. If the ruler own the soldier, nothing appens actually
+        2. If the ruler doesn't own the soldier, the soldier will be removed
+
+        Args:
+            soldiers (pygame.sprite.Group): _description_
+        """
+        if i := pygame.sprite.spritecollideany(self, soldiers):
+            soldiers.remove(i)
 
     # Moves the instance depending on the keys pressed
     def update_position(self) -> None:
@@ -62,7 +84,7 @@ class Ruler(GameEntity):
         Draw the Ruler on the given screen surface.
 
         Args:
-          screen (pygame.Surface): Screen surface.
+            screen (pygame.Surface): Screen surface.
         """
 
         # Superposition of the rectangle on the given surface
