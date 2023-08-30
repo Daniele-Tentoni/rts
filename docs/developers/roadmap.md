@@ -28,5 +28,9 @@ I can't program how many minor releases there will be before 1.0 release, but I 
         - Credits (download contributions from Github and shows their avatars)
 
 2. Tower levels (already described in this doc)
+
 3. Route disruption and recovering (already described in this doc)
+
 4. Settings window with reset local storage options and localization changes
+
+    For localization we could read this paragraph in [Pygame GUI docs](https://pygame-gui.readthedocs.io/en/v_069/localization.html#providing-custom-translation-files-to-the-gui).

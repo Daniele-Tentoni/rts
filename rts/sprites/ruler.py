@@ -1,11 +1,10 @@
-from pygame import Surface, key
+from pygame import Surface
 import pygame
 import pygame.sprite
 
 import rts.config
 from rts.controllers.entity_controller import EntityController
 from rts.models.game_entity import GameEntity
-from rts.sprites.soldier import Soldier
 
 
 class Ruler(GameEntity):
@@ -37,6 +36,7 @@ class Ruler(GameEntity):
         """
         Move the Ruler rectangle by pressed key event.
         """
+        from rts.sprites.soldier import Soldier
 
         # Updates the position of the instance
         self.delta = delta
@@ -45,11 +45,11 @@ class Ruler(GameEntity):
         if Soldier in entity_controller.entity_dict.keys():
             soldiers = entity_controller.entity_dict[Soldier]
             self.check_soldier_collision(soldiers)
-    
+
     def check_soldier_collision(self, soldiers: pygame.sprite.Group):
         """
         Check if any soldier collide with this ruler.
-        
+
         If any soldier collide with a ruler, could appens those actions:
         1. If the ruler own the soldier, nothing appens actually
         2. If the ruler doesn't own the soldier, the soldier will be removed
@@ -62,7 +62,6 @@ class Ruler(GameEntity):
 
     # Moves the instance depending on the keys pressed
     def update_position(self) -> None:
-
         # Moves the rect of the ruler
         self.rect.left = self.x
         self.rect.top = self.y
