@@ -6,7 +6,7 @@ from rts.sprites.soldier import Soldier
 
 @pytest.fixture
 def sample_soldier() -> Soldier:
-    return Soldier(GameEntity(0, 0, [0, 0, 0], [0, 0]), [0, 0], 0, 0)
+    return Soldier(GameEntity(0, 0, [0, 0, 0], [0, 0]), [0, 0], 0, None, 0)
 
 
 @pytest.fixture
