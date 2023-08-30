@@ -58,7 +58,13 @@ class Ruler(GameEntity):
             soldiers (pygame.sprite.Group): _description_
         """
         if i := pygame.sprite.spritecollideany(self, soldiers):
-            soldiers.remove(i)
+            from rts.sprites.soldier import Soldier
+
+            s: Soldier = i
+
+            # Check if the soldier hit is owned by the ruler or not.
+            if s.ownership.ownership != self:
+                soldiers.remove(i)
 
     # Moves the instance depending on the keys pressed
     def update_position(self) -> None:
