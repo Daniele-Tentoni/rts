@@ -146,14 +146,15 @@ class Game:
         add_soldiers = self.event_controller.register_time_event(1000)
 
         # Creates two towers for each player
-        for n in range(PLAYERS_NUMBER * 2):
+        for n in range(self.rulers_number * 2):
             # Generates the position
-            x: float = SCREEN_WIDTH / 3 * (n + 1)
+            x: float = SCREEN_WIDTH / (self.rulers_number * 2 + 1) * (n + 1)
             y: float = SCREEN_HEIGHT / 2
 
             # Creates the instance and adds it to the list
+            print(f"Init {math.floor(n / 2)}")
             ruler = self.entity_controller.entity_dict[Ruler].sprites()[
-                math.ceil(n / 2)
+                math.floor(n / 2)
             ]
             tower = Tower(
                 e=GameEntity(x, y, TOWER_COLOR, TOWER_SIZE),
