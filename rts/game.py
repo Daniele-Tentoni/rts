@@ -25,6 +25,7 @@ from rts.config import *
 from rts.models.game_entity import GameEntity
 from rts.controllers.entity_controller import EntityController
 from rts.controllers.event_controller import EventController
+import rts.controllers.time_controller
 from rts.sprites.ruler import Ruler
 from rts.sprites.soldier import Soldier
 from rts.sprites.tower import Tower
@@ -35,9 +36,6 @@ class Game:
 
     running: bool
     """Define if the game has to go through the loop or exit it and stop his execution."""
-
-    clock_init_step: float
-    """How many times update fps counter."""
 
     routes: list[tuple[tuple[float, float], tuple[float, float]]]
     tower_traced: Tower
@@ -82,6 +80,8 @@ class Game:
         self.entity_controller.reset()
         self.event_controller = EventController()
         self.event_controller.reset()
+        self.time_controller = rts.controllers.time_controller.TimeController(manager)
+        self.time_controller.reset()
 
         # Instance unique properties
         self.screen = screen
@@ -92,8 +92,6 @@ class Game:
         # Initialization of the main entities
         self.init_rulers()
         self.init_towers()
-
-        self.clock_init_step = 1
 
     # Generates the rulers of the game
     def init_rulers(self) -> None:
@@ -172,9 +170,6 @@ class Game:
 
     # Keeps computing and showing frames until exit is requested
     def game_loop(self) -> None:
-        # Take current clock as first thing
-        clock = pygame.time.Clock()
-
         # Game loop exit flag
         self.running = True
 
@@ -186,10 +181,17 @@ class Game:
         self.event_controller.register_time_callback(QUIT, stop_loop)
 
         self.hello_button = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect((350, 275), (100, 50)),
+            relative_rect=pygame.Rect((350, 375), (100, 50)),
             text="Say Hello",
             manager=self.manager,
             tool_tip_text="Click to say Hello!",
+        )
+        self.hide_button = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((450, 375), (100, 50)),
+            text="Hide hints",
+            manager=self.manager,
+            tool_tip_text="Click to disable help tips",
+            visible=get_first_time_player(),
         )
         self.tower_tooltip = None
 
@@ -206,6 +208,12 @@ class Game:
                 # This setting has to be moved in the settings window
                 set_fps_label_visibility(not bool(get_fps_label_visibility()))
                 print("Hello World!")
+            elif (
+                hasattr(event, "ui_element")
+                and event.ui_element == self.hide_button
+            ):
+                set_first_time_player(False)
+                print("Hide hints")
 
         self.event_controller.register_time_callback(
             pygame_gui.UI_BUTTON_PRESSED, print_hello_def
@@ -216,44 +224,23 @@ class Game:
             relative_rect=pygame.Rect((40, 275), (200, 100)),
             manager=self.manager,
         )
-        self.fps = 0
-        fps_label_rel_rect = Rect(-20, -20, 100, 50)
-        fps_label_rel_rect.bottomright = (-30, -20)
-        self.fps_label = pygame_gui.elements.UILabel(
-            relative_rect=fps_label_rel_rect,
-            text=str(self.fps),
-            manager=self.manager,
-            anchors={
-                "left": "right",
-                "right": "right",
-                "top": "bottom",
-                "bottom": "bottom",
-            },
-            visible=get_fps_label_visibility(),
-        )
 
         self.new_player_message = pygame_gui.windows.UIMessageWindow(
             rect=Rect(20, 20, 250, 160),
             html_message="Welcome to RTS",
             manager=self.manager,
             window_title="Welcome",
+            visible=get_first_time_player(),
         )
 
         clock = pygame.time.Clock()
-        clock_init = 0.0
+        rts.controllers.time_controller.clock_init = 0.0
         # Keeps looping until exit is required
         while self.running:
             # Calculate the current delta_time from last frame
             # This function return the number of milliseconds from previous call
             time_delta = clock.tick(60)
-            clock_init += time_delta / 1000 * self.clock_init_step
-            if clock_init > 1:
-                # Clock is computed once each second
-                clock_init -= 1
-                self.fps = 1000 / time_delta
-                fps_string = f"FPS: {round(self.fps, 2)}"
-                print(fps_string)
-                self.fps_label.set_text(fps_string)
+            self.time_controller.update(time_delta)
 
             # Screen cleaning
             self.screen.fill(SCREEN_COLOR)
