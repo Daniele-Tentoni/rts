@@ -1,8 +1,11 @@
-from cmath import atan, cos, sin
-from math import atan2
 from random import randint
+from typing import Tuple
+import pygame
+
+import pygame_gui
 
 from rts.models.game_entity import GameEntity
+from rts.sprites.tower import Tower
 
 
 class Soldier(GameEntity):
@@ -20,6 +23,7 @@ class Soldier(GameEntity):
         e: GameEntity,
         origin: tuple[float, float],
         origin_radius: float,
+        owner: Tower,
         speed: float,
     ) -> None:
         """
@@ -39,6 +43,10 @@ class Soldier(GameEntity):
         self.origin = origin
         self.origin_radius = origin_radius
         self.speed = speed
+
+        self.ownership: Tower = owner
+
+        self.tooltip: pygame_gui.elements.UITooltip = None
 
         self.initiative = 0
         self.initiative_step = 0.0011
@@ -94,3 +102,23 @@ class Soldier(GameEntity):
 
         # Moves the rect of the instance
         self.rect.center = (self.x, self.y)
+
+    def update_tooltip(
+        self, mouse_pos: Tuple[int, int], manager: pygame_gui.UIManager
+    ) -> None:
+        collision = self.rect.collidepoint(mouse_pos[0], mouse_pos[1])
+        if not collision and self.tooltip is not None and self.tooltip.alive():
+            self.tooltip.kill()
+        elif collision and (self.tooltip is None or not self.tooltip.alive()):
+            self.tooltip = pygame_gui.elements.UITooltip(
+                f"Ruler {self.ownership.ownership.x}",
+                [0, 16],
+                manager,
+            )
+            pos = pygame.math.Vector2(
+                (
+                    self.rect.left,
+                    self.rect.top,
+                )
+            )
+            self.tooltip.find_valid_position(pos)

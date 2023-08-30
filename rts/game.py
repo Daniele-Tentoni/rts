@@ -1,3 +1,4 @@
+import math
 from random import randint
 
 from pygame import K_DOWN, K_LEFT, K_RIGHT, K_UP, Rect, Surface
@@ -151,9 +152,13 @@ class Game:
             y: float = SCREEN_HEIGHT / 2
 
             # Creates the instance and adds it to the list
+            ruler = self.entity_controller.entity_dict[Ruler].sprites()[
+                math.ceil(n / 2)
+            ]
             tower = Tower(
                 e=GameEntity(x, y, TOWER_COLOR, TOWER_SIZE),
                 level=1,
+                owner=ruler,
                 soldier_color=SOLDIER_COLOR,
                 soldier_size=SOLDIER_SIZE,
                 soldier_gen_ratio=0.001,
@@ -295,6 +300,7 @@ class Game:
                 soldiers.update(time_delta)
                 for soldier in soldiers:
                     self.screen.blit(soldier.surf, soldier.rect)
+                    soldier.update_tooltip(mouse_pos, self.manager)
 
             # Rulers update
             if Ruler in self.entity_controller.entity_dict.keys():

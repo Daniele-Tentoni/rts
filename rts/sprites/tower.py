@@ -6,7 +6,8 @@ import pygame_gui
 
 from rts.config import FONT_SIZE, TEXT_COLOR, LIMIT_PER_LEVEL
 from rts.models.game_entity import GameEntity
-from rts.sprites.soldier import Soldier
+from rts.sprites.ruler import Ruler
+
 from rts.controllers.entity_controller import EntityController
 
 
@@ -19,6 +20,11 @@ class Tower(GameEntity):
 
     # Level of the tower
     level: int
+
+    ownership: Ruler
+    """
+    Describe the ruler that own the tower. This could change during the game (since it's your objective to win the game...).
+    """
 
     # Custom color and size for the tower
     soldier_color: tuple[int, int, int]
@@ -42,6 +48,7 @@ class Tower(GameEntity):
     def __init__(
         self,
         e: GameEntity,
+        owner: Ruler,
         level: int,
         soldier_color: tuple[int, int, int],
         soldier_size: tuple[float, float],
@@ -60,6 +67,7 @@ class Tower(GameEntity):
         self.soldier_color = soldier_color
         self.soldier_size = soldier_size
         self.level = level
+        self.ownership = owner
         self.soldier_gen_ratio = soldier_gen_ratio
         self.tower_tooltip: pygame_gui.elements.UITooltip = None
 
@@ -143,6 +151,7 @@ class Tower(GameEntity):
         :return: New Soldier created
         :rtype: rts.sprites.soldier.Soldier
         """
+        from rts.sprites.soldier import Soldier
 
         # Reference to the entity controller
         ent_cont = EntityController()
@@ -156,6 +165,7 @@ class Tower(GameEntity):
                 e=GameEntity(
                     self.x, self.y, self.soldier_color, self.soldier_size
                 ),
+                owner=self,
                 origin=(self.x, self.y),
                 origin_radius=25,
                 speed=1,
