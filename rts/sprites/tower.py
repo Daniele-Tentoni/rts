@@ -4,7 +4,7 @@ import pygame
 import pygame.font as font
 import pygame_gui
 
-from rts.config import FONT_SIZE, TEXT_COLOR, LIMIT_PER_LEVEL
+from rts.config import FONT_SIZE, TEXT_COLOR, LIMIT_PER_LEVEL, TOWER_MAX_LEVEL, TOWER_MIN_LEVEL
 from rts.models.game_entity import GameEntity
 from rts.sprites.ruler import Ruler
 
@@ -87,6 +87,9 @@ class Tower(GameEntity):
     def soldier_died(self):
         self.soldiers_number -= 1
         self.create_soldiers()
+        
+        if self._reached_min_soldiers():
+            self.decrease_level()
 
     def _update_soldiers_pool(self, delta: int) -> None:
         """Adds soldiers to the pool if limit has not been reached."""
@@ -175,6 +178,20 @@ class Tower(GameEntity):
                 speed=1,
             )
             ent_cont.register_entity(soldier)
+        
+        if self._reached_max_soldiers():
+            self.increase_level()
+    
+    def decrease_level(self):
+        if self.level > TOWER_MIN_LEVEL:
+            self.level -= 1
+
+    def increase_level(self):
+        if self.level < TOWER_MAX_LEVEL:
+            self.level += 1
 
     def _reached_max_soldiers(self):
         return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]
+    
+    def _reached_min_soldiers(self):
+        return self.soldiers_label == 0
