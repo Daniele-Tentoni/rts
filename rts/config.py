@@ -54,6 +54,8 @@ TOWER_SIZE = (TOWER_WIDTH, TOWER_HEIGHT)
 # Soldiers number limits per level for towers
 # TODO: Maybe change name? Not compulsory
 LIMIT_PER_LEVEL = [2, 5, 10, 20, 50]
+TOWER_MAX_LEVEL = 5
+TOWER_MIN_LEVEL = 0
 
 SCREEN_COLOR = (21, 21, 21)
 SCREEN_HEIGHT = 600
