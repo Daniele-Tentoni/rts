@@ -33,7 +33,9 @@ class TimeController(metaclass=MetaSingleton):
         self.clock_init = 0.0
 
     def reset(self) -> None:
-        pass
+        self.clock_init = 0.0
+        self.clock_init_step = 0.0
+        self.fps = 0
 
     def update(self, time_delta: int):
         self.clock_init += time_delta / 1000 * self.clock_init_step

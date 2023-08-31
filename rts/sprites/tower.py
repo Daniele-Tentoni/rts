@@ -83,6 +83,10 @@ class Tower(GameEntity):
         self._update_soldiers_pool(delta)
         self._update_soldiers_label()
         self._update_soldiers_rect()
+        
+    def soldier_died(self):
+        self.soldiers_number -= 1
+        self.create_soldiers()
 
     def _update_soldiers_pool(self, delta: int) -> None:
         """Adds soldiers to the pool if limit has not been reached."""

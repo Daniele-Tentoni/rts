@@ -51,6 +51,10 @@ class Soldier(GameEntity):
         self.initiative = 0
         self.initiative_step = 0.0011
 
+    def die(self):
+        """Call this to let this soldier die."""
+        self.ownership.soldier_died()
+
     # Updates the state of the instance
     def update(self, delta: int) -> None:
         """
@@ -122,3 +126,4 @@ class Soldier(GameEntity):
                 )
             )
             self.tooltip.find_valid_position(pos)
+    
