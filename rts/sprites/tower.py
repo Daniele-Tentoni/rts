@@ -4,7 +4,13 @@ import pygame
 import pygame.font as font
 import pygame_gui
 
-from rts.config import FONT_SIZE, TEXT_COLOR, LIMIT_PER_LEVEL, TOWER_MAX_LEVEL, TOWER_MIN_LEVEL
+from rts.config import (
+    FONT_SIZE,
+    TEXT_COLOR,
+    LIMIT_PER_LEVEL,
+    TOWER_MAX_LEVEL,
+    TOWER_MIN_LEVEL,
+)
 from rts.models.game_entity import GameEntity
 from rts.sprites.ruler import Ruler
 
@@ -81,21 +87,34 @@ class Tower(GameEntity):
         # Updates the soldiers number label
         # TODO: Soldier number counting
         self._update_soldiers_pool(delta)
-        self._update_soldiers_label()
         self._update_soldiers_rect()
-        
+        self._update_labels()
+
     def soldier_died(self):
-        self.soldiers_number -= 1
-        self.create_soldiers()
+        if self.soldiers_number > 0:
+            self.soldiers_number -= 1
         
         if self._reached_min_soldiers():
             self.decrease_level()
+
+        self.create_soldiers()
 
     def _update_soldiers_pool(self, delta: int) -> None:
         """Adds soldiers to the pool if limit has not been reached."""
         if self._reached_max_soldiers():
             # Adds soldiers in the pool depending on the generation ratio
             self.soldier_gen_pool += self.soldier_gen_ratio * delta
+
+    def _update_labels(self) -> None:
+        """
+        Update every label on the tower.
+        """
+        # Clean the surface before blit on it.
+        self.surf.fill(self.color)
+
+        # Blit every label.
+        self._update_soldiers_label()
+        self._update_level_label()
 
     # Updates and renders the soldiers number label
     def _update_soldiers_label(self) -> None:
@@ -104,22 +123,34 @@ class Tower(GameEntity):
         Update soldiers label content inside tower with the current length of
         soldiers sprite group. Remember to keep this updated.
         """
-
-        # Setting up the label
-        self.surf.fill(self.color)
         sys_font = font.SysFont(font.get_default_font(), FONT_SIZE)
         self.soldiers_label = sys_font.render(
             str(self.soldiers_number), True, TEXT_COLOR
         )
         width, height = self.rect.width, self.rect.height
         rect = self.soldiers_label.get_rect()
-        rect.centerx = width / 2
-        rect.centery = height / 2
+        rect.centerx = width / 2 - 5
+        rect.centery = height / 2 - 5
         self.surf.blit(self.soldiers_label, rect)
 
+    def _update_level_label(self) -> None:
+        """
+        Update level label inside tower.
+
+        Update level label inside tower with the current level.
+        Remember to keep this updated.
+        """
+        sys_font = font.SysFont(font.get_default_font(), FONT_SIZE)
+        self.level_label = sys_font.render(str(self.level), True, TEXT_COLOR)
+        width, height = self.rect.width, self.rect.height
+        rect = self.level_label.get_rect()
+        rect.centerx = width / 2 + 5
+        rect.centery = height / 2 + 5
+        self.surf.blit(self.level_label, rect)
+
     def _update_soldiers_rect(self) -> None:
-        left = self.x + 15
-        top = self.y + 15
+        left = self.x + 25
+        top = self.y + 0
         width = 10
         height = self.soldier_gen_pool * 25
         self.s_gen_rect = pygame.Rect(left, top, width, height)
@@ -178,10 +209,10 @@ class Tower(GameEntity):
                 speed=1,
             )
             ent_cont.register_entity(soldier)
-        
-        if self._reached_max_soldiers():
+
+        if not self._reached_max_soldiers():
             self.increase_level()
-    
+
     def decrease_level(self):
         if self.level > TOWER_MIN_LEVEL:
             self.level -= 1
@@ -192,6 +223,9 @@ class Tower(GameEntity):
 
     def _reached_max_soldiers(self):
         return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]
-    
+
     def _reached_min_soldiers(self):
-        return self.soldiers_label == 0
+        if self.level > 1:
+            return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 2]
+        
+        return False

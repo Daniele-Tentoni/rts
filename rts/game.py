@@ -25,6 +25,7 @@ from rts.config import *
 from rts.models.game_entity import GameEntity
 from rts.controllers.entity_controller import EntityController
 from rts.controllers.event_controller import EventController
+from rts.controllers.time_controller import TimeController
 import rts.controllers.time_controller
 from rts.sprites.ruler import Ruler
 from rts.sprites.soldier import Soldier
@@ -80,7 +81,9 @@ class Game:
         self.entity_controller.reset()
         self.event_controller = EventController()
         self.event_controller.reset()
-        self.time_controller = rts.controllers.time_controller.TimeController(manager)
+        self.time_controller = TimeController(
+            manager
+        )
         self.time_controller.reset()
 
         # Instance unique properties
