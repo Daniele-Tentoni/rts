@@ -4,8 +4,8 @@ from rts.config import get_fps_label_visibility
 
 from rts.controllers.meta_singleton import MetaSingleton
 
-class TimeController(metaclass=MetaSingleton):
 
+class TimeController(metaclass=MetaSingleton):
     clock_init: float
     """Clock accumulator, trigger when reach 1 second."""
 
@@ -47,5 +47,5 @@ class TimeController(metaclass=MetaSingleton):
             print(fps_string)
             if self.fps_label is not None:
                 self.fps_label.set_text(fps_string)
-        
+
         return self.clock_init

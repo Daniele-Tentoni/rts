@@ -126,4 +126,3 @@ class Soldier(GameEntity):
                 )
             )
             self.tooltip.find_valid_position(pos)
-    
