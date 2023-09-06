@@ -84,7 +84,7 @@ class EventController(metaclass=MetaSingleton):
             if event.type in self.time_events and (
                 v := self.time_events[event.type]
             ):
-                self._handle_events(v, event)
+                self._handle_events(v, event=event)
 
         # Key events
         k_pressed = key.get_pressed()
@@ -101,11 +101,10 @@ class EventController(metaclass=MetaSingleton):
     def _handle_events(
         self,
         callbacks: List[Callable[[Event], None]],
-        *args,
+        **args,
     ) -> None:
         for callback in callbacks:
-            event = args[0] if len(args) > 0 else None
-            callback(event)
+            callback(**args)
 
     def register_time_event(self, time_span: int) -> int:
         """Register a new time event.

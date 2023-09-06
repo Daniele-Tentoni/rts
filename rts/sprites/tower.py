@@ -186,7 +186,7 @@ class Tower(GameEntity):
             self.tower_tooltip.find_valid_position(pos)
 
     # Generates new soldiers depending on the pool number on the same position of the tower
-    def create_soldiers(self, *args) -> None:
+    def create_soldiers(self, **args) -> None:
         """Spawn a new soldier.
 
         Spawn a soldier near the tower, given her center coordinates. Then, add the
