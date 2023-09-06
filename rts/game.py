@@ -81,9 +81,7 @@ class Game:
         self.entity_controller.reset()
         self.event_controller = EventController()
         self.event_controller.reset()
-        self.time_controller = TimeController(
-            manager
-        )
+        self.time_controller = TimeController(manager)
         self.time_controller.reset()
 
         # Instance unique properties
@@ -115,6 +113,7 @@ class Game:
             ruler = Ruler(
                 e=GameEntity(x, y, RULER_COLOR, RULER_SIZE), speed=0.1
             )
+            ruler.id = n
 
             # Assigns the first ruler to the player by adding the movement events
             # TODO: Add arrows movement, maybe?
@@ -147,13 +146,14 @@ class Game:
         add_soldiers = self.event_controller.register_time_event(1000)
 
         # Creates two towers for each player
+        # TODO: The number of towers could be a parameter for the game mode and player type.
         for n in range(self.rulers_number * 2):
+            
             # Generates the position
             x: float = SCREEN_WIDTH / (self.rulers_number * 2 + 1) * (n + 1)
             y: float = SCREEN_HEIGHT / 2
 
             # Creates the instance and adds it to the list
-            print(f"Init {math.floor(n / 2)}")
             ruler = self.entity_controller.entity_dict[Ruler].sprites()[
                 math.floor(n / 2)
             ]
@@ -273,6 +273,7 @@ class Game:
                         border_radius=2,
                     )
                     tower.update_tooltip(mouse_pos, self.manager)
+                    tower.mouse_over(mouse_pos, self.screen)
 
             # Route updates
             if self.tower_traced is not None:
@@ -299,10 +300,11 @@ class Game:
                 rulers.update(delta=time_delta)
                 for ruler in rulers:
                     self.screen.blit(ruler.surf, ruler.rect)
-
+                    ruler.mouse_over(mouse_pos, self.screen)
+            
+            # Renders the scene
             self.manager.update(time_delta)
             self.manager.draw_ui(self.screen)
-            # Renders the scene
             display.flip()
 
     def has_to_un_trace(self, event: Event) -> bool:

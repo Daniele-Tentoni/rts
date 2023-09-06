@@ -90,10 +90,16 @@ class Tower(GameEntity):
         self._update_soldiers_rect()
         self._update_labels()
 
+    def mouse_over(self, pos: Tuple[int, int], surf: Surface) -> None:
+        if self.rect.collidepoint(pos):
+            # If it's my tower, I can color the circle of green.
+            color = "green" if self.ownership.id == 0 else "red"
+            pygame.draw.circle(surf, color, self.rect.center, 40, 1)
+
     def soldier_died(self):
         if self.soldiers_number > 0:
             self.soldiers_number -= 1
-        
+
         if self._reached_min_soldiers():
             self.decrease_level()
 
@@ -227,5 +233,5 @@ class Tower(GameEntity):
     def _reached_min_soldiers(self):
         if self.level > 1:
             return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 2]
-        
+
         return False
