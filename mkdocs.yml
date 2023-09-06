@@ -11,6 +11,7 @@ site_url: https://rts.readthedocs.io/
 nav:
   - Home: "index.md"
   - "Player Guides":
+      - "Install": "players/install.md"
       - "Players": "players/index.md"
       - "Entities":
           - "Ruler": "players/entities/ruler.md"
