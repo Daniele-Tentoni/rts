@@ -182,6 +182,29 @@ class Game:
 
         self.event_controller.register_key_event(K_ESCAPE, stop_loop)
         self.event_controller.register_time_callback(QUIT, stop_loop)
+        
+        def mouse_down(**args):
+            event = args.get('event')
+            mouse_pos = event.pos
+            mouse_pressed = pygame.mouse.get_pressed()
+            if mouse_pressed[0]:
+                # Trigger only left mouse button.
+                print(f"Mouse down on {mouse_pos}")
+                if self.has_to_trace(event):
+                    print(f"Tracing {self.tower_traced}")
+                    self.tower_traced = self.start_trace()
+        
+        def mouse_up(**args):
+            event = args.get('event')
+            mouse_pos = event.pos
+            mouse_pressed = pygame.mouse.get_pressed()
+            print(f"Mouse up on {event} {mouse_pressed}")
+            if self.has_to_un_trace(event):
+                print(f"Stop tracing {self.stop_trace()}")
+                self.tower_traced = None
+        
+        self.event_controller.register_time_callback(MOUSEBUTTONDOWN, mouse_down)
+        self.event_controller.register_time_callback(MOUSEBUTTONUP, mouse_up)
 
         self.hello_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect((350, 375), (100, 50)),
@@ -222,11 +245,13 @@ class Game:
             pygame_gui.UI_BUTTON_PRESSED, print_hello_def
         )
 
+        """
         self.txt = pygame_gui.elements.UITextBox(
             "To conquer enemy towers, send them soldiers from your towers.",
             relative_rect=pygame.Rect((40, 275), (200, 100)),
             manager=self.manager,
         )
+        """
 
         self.new_player_message = pygame_gui.windows.UIMessageWindow(
             rect=Rect(20, 20, 250, 160),
@@ -323,26 +348,31 @@ class Game:
 
     def start_trace(self) -> Tower:
         pos = mouse.get_pos()
-        for tower in self.towers:
-            if tower_clicked(tower, pos):
-                return tower
+        if self.entity_controller.has(Tower):
+            towers = self.entity_controller.entity_dict[Tower]
+            for tower in towers:
+                if tower_clicked(tower, pos):
+                    return tower
+        
         return None
 
     def stop_trace(self) -> None:
         pos = mouse.get_pos()
-        remaining_towers = (
-            t for t in self.towers if t is not self.tower_traced
-        )
-        for tower in remaining_towers:
-            if tower_clicked(tower, pos):
-                future_tuple = (
-                    self.tower_traced.rect.center,
-                    tower.rect.center,
-                )
-                # TODO: Change the type to set instead of list? Performance improvement?
-                if future_tuple not in self.routes:
-                    print("link")
-                    self.routes.append(future_tuple)
+        if self.entity_controller.has(Tower):
+            towers = self.entity_controller.entity_dict[Tower]
+            remaining_towers = (
+                t for t in towers if t is not self.tower_traced
+            )
+            for tower in remaining_towers:
+                if tower_clicked(tower, pos):
+                    future_tuple = (
+                        self.tower_traced.rect.center,
+                        tower.rect.center,
+                    )
+                    # TODO: Change the type to set instead of list? Performance improvement?
+                    if future_tuple not in self.routes:
+                        print("link")
+                        self.routes.append(future_tuple)
 
 
 def tower_clicked(tower: Tower, mouse) -> bool:
