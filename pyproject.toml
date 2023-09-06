@@ -25,8 +25,11 @@ classifiers = [
   "Topic :: Games/Entertainment",
   "Topic :: Games/Entertainment :: Real Time Strategy",
 ]
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
 
-[project.scripts]
+
+[tool.poetry.scripts]
 rts = 'rts.rts:main'
 rts_server = 'server.server:cli'
 
