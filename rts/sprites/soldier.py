@@ -3,6 +3,7 @@ from typing import Tuple
 import pygame
 
 import pygame_gui
+from rts.controllers.entity_controller import EntityController
 
 from rts.models.game_entity import GameEntity
 from rts.sprites.tower import Tower
@@ -70,6 +71,22 @@ class Soldier(GameEntity):
         if self.initiative > 1:
             self.update_position(delta)
             self.initiative = self.initiative - 1
+        
+        controller = EntityController()
+        if Soldier in controller.entity_dict:
+            soldiers = controller.entity_dict[Soldier]
+            # Check collision with other soldiers (they must die if so)
+            list = pygame.sprite.spritecollide(self, soldiers, False)
+            # If some collision is detected, check if they are enemies
+            for sprite in list:
+                other: Soldier = sprite
+                if other.ownership.ownership != self.ownership.ownership:
+                    soldiers.remove(other)
+                    other.die()
+                    self.remove(soldiers)
+                    self.die()
+                    break # Remove only one soldier each soldier.
+            
 
     # Moves the instance in a random way
     def update_position(self, delta: int) -> None:

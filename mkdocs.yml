@@ -16,6 +16,7 @@ nav:
       - "Entities":
           - "Ruler": "players/entities/ruler.md"
           - "Tower": "players/entities/tower.md"
+          - "Soldier": "players/entities/soldier.md"
   - "Developer Guides":
       - "Developers": "developers/index.md"
       - "Getting started": "developers/getting_started.md"
