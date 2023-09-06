@@ -26,17 +26,20 @@ def test_simple_tower(sample_tower: Tower, delta: int):
     sample_tower._update_soldiers_pool(delta)
     assert sample_tower.soldier_gen_pool == 1000
 
+
 def test_soldier_creation(sample_tower: Tower):
     assert sample_tower.soldiers_number == 0
     sample_tower._update_soldiers_pool(2000)
     sample_tower.create_soldiers()
     assert sample_tower.soldiers_number == 2
 
+
 def test_level_increment(sample_tower: Tower):
     assert sample_tower.level == 1
     sample_tower._update_soldiers_pool(2000)
     sample_tower.create_soldiers()
     assert sample_tower.level == 2
+
 
 def test_level_decrement(sample_tower: Tower):
     sample_tower.level = 2
