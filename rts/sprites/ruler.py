@@ -15,7 +15,7 @@ class Ruler(GameEntity):
 
     It contains method to draw it and update his position.
     """
-    
+
     id: int
 
     # Constructor
@@ -29,8 +29,8 @@ class Ruler(GameEntity):
 
         # Base class initialization
         super(Ruler, self).__init__(e.x, e.y, e.color, e.size)
-        
-        self.id = 0 # This has to be rewritten when this ruler is generated or change faction.
+
+        self.id = 0  # This has to be rewritten when this ruler is generated or change faction.
 
         # Instance unique properties
         self.speed = speed
@@ -39,7 +39,7 @@ class Ruler(GameEntity):
         if self.rect.collidepoint(pos):
             color = "green" if self.id == 0 else "red"
             pygame.draw.circle(surf, color, self.rect.center, 30, 1)
-    
+
     # Updates the state of the instance
     def update(self, delta: int) -> None:
         """
