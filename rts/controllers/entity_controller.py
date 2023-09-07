@@ -6,6 +6,12 @@ from rts.models.game_entity import GameEntity
 
 
 class EntityController(metaclass=MetaSingleton):
+    """
+    Super controller for every entity in the game instance.
+
+    You can call this class everywhere in your code and retrieve sprite instances.
+    """
+
     # Game entities groups
     game_entities: Group
 
@@ -35,10 +41,13 @@ class EntityController(metaclass=MetaSingleton):
         self.entity_dict[e.__class__].add(e)
 
     def entities(self, t: Type):
+        if t not in self.entity_dict:
+            self.entity_dict[t] = Group()
+
         return self.entity_dict[t]
 
     def has(self, t: Type):
-        return t in self.entity_dict.keys()
+        return t in self.entity_dict
 
     def has_e(self, e: T):
         return self.has(e.__class__) and e in self.entity_dict[e.__class__]

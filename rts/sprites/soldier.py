@@ -17,6 +17,7 @@ class Soldier(GameEntity):
 
     # Speed of the soldier
     speed: float
+    target: Tower
 
     # Constructor
     def __init__(
@@ -44,6 +45,7 @@ class Soldier(GameEntity):
         self.origin = origin
         self.origin_radius = origin_radius
         self.speed = speed
+        self.target = None
 
         self.ownership: Tower = owner
 
@@ -71,7 +73,7 @@ class Soldier(GameEntity):
         if self.initiative > 1:
             self.update_position(delta)
             self.initiative = self.initiative - 1
-        
+
         controller = EntityController()
         if Soldier in controller.entity_dict:
             soldiers = controller.entity_dict[Soldier]
@@ -85,18 +87,39 @@ class Soldier(GameEntity):
                     other.die()
                     self.remove(soldiers)
                     self.die()
-                    break # Remove only one soldier each soldier.
-            
+                    break  # Remove only one soldier each soldier.
+        
+        if controller.has(Tower):
+            towers = controller.entities(Tower)
+            list = pygame.sprite.spritecollide(self, towers, False)
+            for sprite in list:
+                other: Tower = sprite
+                if other.ownership != self.ownership.ownership:
+                    self.kill()
+                    self.die()
+                    other.die_random_soldier()
+                    break
 
     # Moves the instance in a random way
     def update_position(self, delta: int) -> None:
-        # Generates the displacement
-        delta_x = randint(-1, 1) * self.speed * delta
-        delta_y = randint(-1, 1) * self.speed * delta
+        if not self.target:
+            # Generates the displacement
+            delta_x = randint(-1, 1) * self.speed * delta
+            delta_y = randint(-1, 1) * self.speed * delta
 
-        # Updates the position of the instance
-        self.x += delta_x
-        self.y += delta_y
+            # Updates the position of the instance
+            self.x += delta_x
+            self.y += delta_y
+        else:
+            to_x = -0.5 if self.target.rect.centerx < self.rect.centerx else 0.5
+            to_y = -0.5 if self.target.rect.centery < self.rect.centery else 0.5
+            
+            delta_x = to_x * self.speed * delta
+            delta_y = to_y * self.speed * delta
+
+            # Updates the position of the instance
+            self.x += delta_x
+            self.y += delta_y
 
         # Moves the rectangle of the soldier
         self.update_rect()
@@ -111,7 +134,7 @@ class Soldier(GameEntity):
         # TODO: Verify if the atan is the correct function
         angle = atan2(self.y, self.x).real
         self.x = self.origin_radius * cos(angle).real
-        self.y = self.origin_radius * sin(angle).real"""
+        self.y = self.origin_radius * sin(angle).real
         if self.x > self.origin[0] + self.origin_radius:
             self.x = self.origin[0] + self.origin_radius
         if self.x < self.origin[0] - self.origin_radius:
@@ -120,9 +143,13 @@ class Soldier(GameEntity):
             self.y = self.origin[1] - self.origin_radius
         if self.y > self.origin[1] + self.origin_radius:
             self.y = self.origin[1] + self.origin_radius
-
+"""
         # Moves the rect of the instance
         self.rect.center = (self.x, self.y)
+        
+        # After update we can reset the target
+        # If the target has to change, it will change by route update.
+        self.target = None
 
     def update_tooltip(
         self, mouse_pos: Tuple[int, int], manager: pygame_gui.UIManager

@@ -104,6 +104,17 @@ class Tower(GameEntity):
             self.decrease_level()
 
         self.create_soldiers()
+    
+    def die_random_soldier(self):
+        from rts.sprites.soldier import Soldier
+        c = EntityController()
+        if c.has(Soldier):
+            soldiers = c.entities(Soldier)
+            for sprite in soldiers:
+                s: Soldier = sprite
+                if s.ownership == self:
+                    s.kill()
+                    self.soldier_died()
 
     def _update_soldiers_pool(self, delta: int) -> None:
         """Adds soldiers to the pool if limit has not been reached."""

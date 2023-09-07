@@ -27,6 +27,7 @@ from rts.controllers.entity_controller import EntityController
 from rts.controllers.event_controller import EventController
 from rts.controllers.time_controller import TimeController
 import rts.controllers.time_controller
+from rts.sprites.route import Route
 from rts.sprites.ruler import Ruler
 from rts.sprites.soldier import Soldier
 from rts.sprites.tower import Tower
@@ -148,7 +149,6 @@ class Game:
         # Creates two towers for each player
         # TODO: The number of towers could be a parameter for the game mode and player type.
         for n in range(self.rulers_number * 2):
-            
             # Generates the position
             x: float = SCREEN_WIDTH / (self.rulers_number * 2 + 1) * (n + 1)
             y: float = SCREEN_HEIGHT / 2
@@ -182,9 +182,9 @@ class Game:
 
         self.event_controller.register_key_event(K_ESCAPE, stop_loop)
         self.event_controller.register_time_callback(QUIT, stop_loop)
-        
+
         def mouse_down(**args):
-            event = args.get('event')
+            event = args.get("event")
             mouse_pos = event.pos
             mouse_pressed = pygame.mouse.get_pressed()
             if mouse_pressed[0]:
@@ -193,17 +193,19 @@ class Game:
                 if self.has_to_trace(event):
                     print(f"Tracing {self.tower_traced}")
                     self.tower_traced = self.start_trace()
-        
+
         def mouse_up(**args):
-            event = args.get('event')
+            event = args.get("event")
             mouse_pos = event.pos
             mouse_pressed = pygame.mouse.get_pressed()
             print(f"Mouse up on {event} {mouse_pressed}")
             if self.has_to_un_trace(event):
                 print(f"Stop tracing {self.stop_trace()}")
                 self.tower_traced = None
-        
-        self.event_controller.register_time_callback(MOUSEBUTTONDOWN, mouse_down)
+
+        self.event_controller.register_time_callback(
+            MOUSEBUTTONDOWN, mouse_down
+        )
         self.event_controller.register_time_callback(MOUSEBUTTONUP, mouse_up)
 
         self.hello_button = pygame_gui.elements.UIButton(
@@ -309,7 +311,8 @@ class Game:
                 self.screen.blit(state_label, (80, 80))
 
             for route in self.routes:
-                draw.line(self.screen, TEXT_COLOR, route[0], route[1], width=2)
+                # draw.line(self.screen, TEXT_COLOR, route[0], route[1], width=2)
+                route.update(time_delta, self.screen)
 
             # Soldiers updates
             if Soldier in self.entity_controller.entity_dict.keys():
@@ -326,7 +329,7 @@ class Game:
                 for ruler in rulers:
                     self.screen.blit(ruler.surf, ruler.rect)
                     ruler.mouse_over(mouse_pos, self.screen)
-            
+
             # Renders the scene
             self.manager.update(time_delta)
             self.manager.draw_ui(self.screen)
@@ -351,9 +354,10 @@ class Game:
         if self.entity_controller.has(Tower):
             towers = self.entity_controller.entity_dict[Tower]
             for tower in towers:
-                if tower_clicked(tower, pos):
+                # You can link only your towers
+                if tower_clicked(tower, pos) and tower.ownership.id == 0:
                     return tower
-        
+
         return None
 
     def stop_trace(self) -> None:
@@ -372,7 +376,7 @@ class Game:
                     # TODO: Change the type to set instead of list? Performance improvement?
                     if future_tuple not in self.routes:
                         print("link")
-                        self.routes.append(future_tuple)
+                        self.routes.append(Route(self.tower_traced, tower))
 
 
 def tower_clicked(tower: Tower, mouse) -> bool:
