@@ -154,14 +154,15 @@ class Game:
             y: float = SCREEN_HEIGHT / 2
 
             # Creates the instance and adds it to the list
-            ruler = self.entity_controller.entity_dict[Ruler].sprites()[
+            ruler: Ruler = self.entity_controller.entity_dict[Ruler].sprites()[
                 math.floor(n / 2)
             ]
+            color = SOLDIER_C_1 if ruler.id == 0 else SOLDIER_C_2
             tower = Tower(
                 e=GameEntity(x, y, TOWER_COLOR, TOWER_SIZE),
                 level=1,
                 owner=ruler,
-                soldier_color=SOLDIER_COLOR,
+                soldier_color=color,
                 soldier_size=SOLDIER_SIZE,
                 soldier_gen_ratio=0.001,
             )
