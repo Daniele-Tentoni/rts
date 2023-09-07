@@ -16,6 +16,8 @@ When the tower reach its maximum soldier capacity, it stops the progress to the 
 
 ## Routes
 
+![Routes](../img/routes.gif)
+
 Between tower you can create routes to send your soldiers to fight for your kingdom. They will fight against enemy soldiers sent to protect other towers and if they reach the other site, they will conquer it.
 
 You can create a route between two towers, by clicking on one and release the mouse button or clicking on another one. Soldiers from each tower will start to walk on the route.
