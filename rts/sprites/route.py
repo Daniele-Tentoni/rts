@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from pygame import Surface
+from pygame import Rect, Surface
 import pygame
 from rts.config import TEXT_COLOR
 from rts.controllers.entity_controller import EntityController
@@ -17,6 +17,7 @@ class Route:
         self.end = end
 
         self.color = TEXT_COLOR
+        self.rect = Rect(-1, -1, 0, 0)
         self.width = 2
 
     def update(self, delta: int, screen: Surface):
@@ -25,22 +26,32 @@ class Route:
             self.color,
             self.start.rect.center,
             self.end.rect.center,
-            width=2,
+            width=self.width,
         )
-        # Per ogni soldato che appartiene ad una delle due torri
+        
+        # Each soldier will have the other tower as a target
         soldiers = EntityController().entities(Soldier)
         for entity in soldiers:
             soldier: Soldier = entity
             if soldier.ownership == self.start:
                 soldier.target = self.end
-            if soldier.ownership == self.end:
+            elif soldier.ownership == self.end:
                 soldier.target = self.start
-        # Lo avvicino alla rotta e poi lo mando verso l'altra torre
 
-    def over(self, pos: Tuple[int, int], surf: Surface):
+    def over(self, pos: Tuple[int, int], surf: Surface = None):
+        """
+        Do things if the position given is over the route.
+        This method has side effects inside, we should fix it.
+        
+        :param pos: Position of the object to check over the route
+        :param surf: Screen surface where to draw new objects
+        :return: True if is over, false otherwise
+        """
         if self.rect.collidepoint(pos):
-            self.rect.width = 4
+            self.width = 4
             self.color = "green" if self.start.ownership.id == 0 else "red"
+            return True
         else:
-            self.rect.width = 2
+            self.width = 2
             self.color = TEXT_COLOR
+            return False
