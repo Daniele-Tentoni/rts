@@ -28,7 +28,7 @@ class Route:
             self.end.rect.center,
             width=self.width,
         )
-        
+
         # Each soldier will have the other tower as a target
         soldiers = EntityController().entities(Soldier)
         for entity in soldiers:
@@ -42,7 +42,7 @@ class Route:
         """
         Do things if the position given is over the route.
         This method has side effects inside, we should fix it.
-        
+
         :param pos: Position of the object to check over the route
         :param surf: Screen surface where to draw new objects
         :return: True if is over, false otherwise

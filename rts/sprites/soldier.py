@@ -68,37 +68,46 @@ class Soldier(GameEntity):
         to reclaim the memory as necessary.
         """
 
-        # Updates the position of the instance
+        # Before check collision, ensure we are in the future correct position
         self.initiative = self.initiative + self.initiative_step * delta
         if self.initiative > 1:
             self.update_position(delta)
             self.initiative = self.initiative - 1
 
         controller = EntityController()
-        if Soldier in controller.entity_dict:
-            soldiers = controller.entity_dict[Soldier]
-            # Check collision with other soldiers (they must die if so)
-            list = pygame.sprite.spritecollide(self, soldiers, False)
-            # If some collision is detected, check if they are enemies
-            for sprite in list:
-                other: Soldier = sprite
-                if other.ownership.ownership != self.ownership.ownership:
-                    soldiers.remove(other)
-                    other.die()
-                    self.remove(soldiers)
-                    self.die()
-                    break  # Remove only one soldier each soldier.
-        
-        if controller.has(Tower):
-            towers = controller.entities(Tower)
-            list = pygame.sprite.spritecollide(self, towers, False)
-            for sprite in list:
-                other: Tower = sprite
-                if other.ownership != self.ownership.ownership:
+        list = pygame.sprite.spritecollide(self, controller.game_entities, False)
+        for sprite in list:
+            # Check collision with other soldiers
+            if isinstance(sprite, Soldier):
+                # Some behaviour difference if they are enemies or not
+                # If enemy, everyone has to die
+                if sprite.ownership.ownership != self.ownership.ownership:
+                    # Kill the enemy.
+                    sprite.kill()
+                    sprite.die()
+                    
+                    # Kill the sprite itself.
                     self.kill()
                     self.die()
-                    other.die_random_soldier()
+                    # Break to remove only one soldier each soldier collision.
                     break
+            
+            # Check collision with towers
+            if isinstance(sprite, Tower):
+                # Soldiers with a target must die only when colliding with the target tower
+                if self.target == sprite:
+                    print("E' il mio target!!!")
+                    self.kill()
+                    self.die()
+                    sprite.die_random_soldier(self)
+                    break
+                
+                # Soldiers without a target must die when they collide with an enemy tower
+                if sprite.ownership != self.ownership.ownership:
+                    print(f"Non e' il mio target {self.target} e {sprite}")
+                    self.kill()
+                    self.die()
+                    break 
 
     # Moves the instance in a random way
     def update_position(self, delta: int) -> None:
@@ -111,9 +120,13 @@ class Soldier(GameEntity):
             self.x += delta_x
             self.y += delta_y
         else:
-            to_x = -0.5 if self.target.rect.centerx < self.rect.centerx else 0.5
-            to_y = -0.5 if self.target.rect.centery < self.rect.centery else 0.5
-            
+            to_x = (
+                -1 if self.target.rect.centerx < self.rect.centerx else 1
+            )
+            to_y = (
+                -1 if self.target.rect.centery < self.rect.centery else 1
+            )
+
             delta_x = to_x * self.speed * delta
             delta_y = to_y * self.speed * delta
 
@@ -142,14 +155,14 @@ class Soldier(GameEntity):
         if self.y < self.origin[1] - self.origin_radius:
             self.y = self.origin[1] - self.origin_radius
         if self.y > self.origin[1] + self.origin_radius:
-            self.y = self.origin[1] + self.origin_radius
-"""
+            self.y = self.origin[1] + self.origin_radius"""
         # Moves the rect of the instance
         self.rect.center = (self.x, self.y)
-        
+
         # After update we can reset the target
         # If the target has to change, it will change by route update.
-        self.target = None
+        # self.target = None
+        # Removed due to issue with enemy tower collision
 
     def update_tooltip(
         self, mouse_pos: Tuple[int, int], manager: pygame_gui.UIManager
