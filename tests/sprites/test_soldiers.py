@@ -33,11 +33,16 @@ def test_simple_soldier_reset_initiative(sample_soldier: Soldier, delta: int):
         sample_soldier.update(delta=delta)
     assert abs(sample_soldier.initiative - 0.11) < 1e-16
 
+
 def test_collision_between_soldiers():
     r1 = Ruler(GameEntity(0, 0, [0, 0, 0], [0, 0]), 1)
     r2 = Ruler(GameEntity(0, 0, [0, 0, 0], [0, 0]), 1)
-    t1 = Tower(GameEntity(0, 0, [0, 0, 0], [0, 0]), r1, 1, [0, 0, 0], [0, 0], 0.1)
-    t2 = Tower(GameEntity(0, 0, [0, 0, 0], [0, 0]), r2, 1, [0, 0, 0], [0, 0], 0.1)
+    t1 = Tower(
+        GameEntity(0, 0, [0, 0, 0], [0, 0]), r1, 1, [0, 0, 0], [0, 0], 0.1
+    )
+    t2 = Tower(
+        GameEntity(0, 0, [0, 0, 0], [0, 0]), r2, 1, [0, 0, 0], [0, 0], 0.1
+    )
     s1 = Soldier(GameEntity(0, 0, [0, 0, 0], [1, 1]), [0, 0], 0, t1, 0)
     s2 = Soldier(GameEntity(0, 1, [0, 0, 0], [1, 1]), [0, 0], 0, t2, 0)
     e = EntityController()
@@ -47,12 +52,17 @@ def test_collision_between_soldiers():
     print(e.entity_dict[Soldier])
     assert s1 in e.entity_dict[Soldier]
     assert s2 in e.entity_dict[Soldier]
-    
+
+
 def test_collision_between_soldiers():
     r1 = Ruler(GameEntity(0, 0, [0, 0, 0], [0, 0]), 1)
     r2 = Ruler(GameEntity(0, 0, [0, 0, 0], [0, 0]), 1)
-    t1 = Tower(GameEntity(0, 0, [0, 0, 0], [0, 0]), r1, 1, [0, 0, 0], [0, 0], 0.1)
-    t2 = Tower(GameEntity(0, 0, [0, 0, 0], [0, 0]), r2, 1, [0, 0, 0], [0, 0], 0.1)
+    t1 = Tower(
+        GameEntity(0, 0, [0, 0, 0], [0, 0]), r1, 1, [0, 0, 0], [0, 0], 0.1
+    )
+    t2 = Tower(
+        GameEntity(0, 0, [0, 0, 0], [0, 0]), r2, 1, [0, 0, 0], [0, 0], 0.1
+    )
     s1 = Soldier(GameEntity(0, 1, [0, 0, 0], [1, 1]), [0, 0], 0, t1, 0)
     s2 = Soldier(GameEntity(0, 1, [0, 0, 0], [1, 1]), [0, 0], 0, t2, 0)
     e = EntityController()

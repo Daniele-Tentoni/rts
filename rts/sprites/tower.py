@@ -104,9 +104,11 @@ class Tower(GameEntity):
             self.decrease_level()
 
         self.create_soldiers()
-    
-    def die_random_soldier(self):
+
+    def die_random_soldier(self, attacker):
         from rts.sprites.soldier import Soldier
+        print("Die random soldier")
+
         c = EntityController()
         if c.has(Soldier):
             soldiers = c.entities(Soldier)
@@ -115,6 +117,10 @@ class Tower(GameEntity):
                 if s.ownership == self:
                     s.kill()
                     self.soldier_died()
+        
+        if isinstance(attacker, Soldier):
+            if self.soldiers_number == 0:
+                self.change_ownership(attacker.ownership.ownership)
 
     def _update_soldiers_pool(self, delta: int) -> None:
         """Adds soldiers to the pool if limit has not been reached."""
@@ -237,6 +243,21 @@ class Tower(GameEntity):
     def increase_level(self):
         if self.level < TOWER_MAX_LEVEL:
             self.level += 1
+    
+    def change_ownership(self, owner: Ruler):
+        """
+        This has to be called when the tower has to change the ownership. Many operations have to be done in order to complete the process.
+        """
+        self.ownership = owner
+        self.soldier_color = owner.color
+        
+        from rts.sprites.route import Route
+        # Every route from and to this tower have to be destroyed
+        c = EntityController()
+        for r in c.entities(Route):
+            if isinstance(r, Route):
+                if r.start == self or r.end == self:
+                    r.kill()
 
     def _reached_max_soldiers(self):
         return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]

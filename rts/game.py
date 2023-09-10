@@ -1,5 +1,6 @@
 import math
 from random import randint
+from typing import List
 
 from pygame import K_DOWN, K_LEFT, K_RIGHT, K_UP, Rect, Surface
 from pygame import display, font, mouse, draw
@@ -39,7 +40,7 @@ class Game:
     running: bool
     """Define if the game has to go through the loop or exit it and stop his execution."""
 
-    routes: list[tuple[tuple[float, float], tuple[float, float]]]
+    routes: List[Route]
     tower_traced: Tower
 
     entity_controller: EntityController
@@ -194,6 +195,11 @@ class Game:
                 if self.has_to_trace(event):
                     print(f"Tracing {self.tower_traced}")
                     self.tower_traced = self.start_trace()
+            
+            if mouse_pressed[2]:
+                for route in self.routes:
+                    if route.rect.collidepoint(mouse_pos):
+                        self.routes.remove(route)
 
         def mouse_up(**args):
             event = args.get("event")
@@ -314,6 +320,7 @@ class Game:
             for route in self.routes:
                 # draw.line(self.screen, TEXT_COLOR, route[0], route[1], width=2)
                 route.update(time_delta, self.screen)
+                route.over(mouse_pos, self.screen)
 
             # Soldiers updates
             if Soldier in self.entity_controller.entity_dict.keys():
