@@ -13,10 +13,9 @@ class TimeController(metaclass=MetaSingleton):
     """How many times update fps counter."""
 
     def __init__(self, ui_manager: pygame_gui.UIManager):
-        print(f"Visibility {get_fps_label_visibility()}")
         self.fps = 0
         fps_label_rel_rect = Rect(-20, -20, 100, 50)
-        fps_label_rel_rect.bottomright = (-30, -20)
+        fps_label_rel_rect.bottomright = (-60, -40)
         self.fps_label = pygame_gui.elements.UILabel(
             relative_rect=fps_label_rel_rect,
             text=str(""),
@@ -34,7 +33,7 @@ class TimeController(metaclass=MetaSingleton):
 
     def reset(self) -> None:
         self.clock_init = 0.0
-        self.clock_init_step = 0.0
+        self.clock_init_step = 1.0
         self.fps = 0
 
     def update(self, time_delta: int):
@@ -47,5 +46,6 @@ class TimeController(metaclass=MetaSingleton):
             print(fps_string)
             if self.fps_label is not None:
                 self.fps_label.set_text(fps_string)
+            return True
 
-        return self.clock_init
+        return False

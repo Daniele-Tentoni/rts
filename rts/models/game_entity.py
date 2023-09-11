@@ -11,6 +11,12 @@ class GameEntity(Sprite):
     color: tuple[int, int, int]
     size: tuple[float, float]
 
+    selected: bool
+    """
+    Gets or sets if the entity is selected or not.
+    You can select an entity by moving mouse over it or over the owner.
+    """
+
     # Constructor
     def __init__(
         self,
@@ -33,3 +39,5 @@ class GameEntity(Sprite):
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
         self.rect.move_ip(self.x, self.y)
+
+        self.selected = False
