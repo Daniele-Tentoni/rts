@@ -19,6 +19,12 @@ class Soldier(GameEntity):
     speed: float
     target: Tower
 
+    selected: bool
+    """
+    Gets or sets if the soldier is selected or not.
+    You can select a soldier by moving mouse over it or over the tower owner.
+    """
+
     # Constructor
     def __init__(
         self,
@@ -53,9 +59,11 @@ class Soldier(GameEntity):
 
         self.initiative = 0
         self.initiative_step = 0.0011
+        self.selected = False
 
     def die(self):
         """Call this to let this soldier die."""
+        self.kill()
         self.ownership.soldier_died()
 
     # Updates the state of the instance
@@ -69,13 +77,17 @@ class Soldier(GameEntity):
         """
 
         # Before check collision, ensure we are in the future correct position
-        self.initiative = self.initiative + self.initiative_step * delta
+        """self.initiative += self.initiative_step * delta
         if self.initiative > 1:
-            self.update_position(delta)
-            self.initiative = self.initiative - 1
+            
+            self.initiative -= 1"""
+        self.update_position(delta)
 
-        controller = EntityController()
-        list = pygame.sprite.spritecollide(self, controller.game_entities, False)
+        # Moves the rectangle of the soldier
+        self.update_rect()
+
+        c = EntityController()
+        list = pygame.sprite.spritecollide(self, c.game_entities, False)
         for sprite in list:
             # Check collision with other soldiers
             if isinstance(sprite, Soldier):
@@ -85,13 +97,13 @@ class Soldier(GameEntity):
                     # Kill the enemy.
                     sprite.kill()
                     sprite.die()
-                    
+
                     # Kill the sprite itself.
                     self.kill()
                     self.die()
                     # Break to remove only one soldier each soldier collision.
                     break
-            
+
             # Check collision with towers
             if isinstance(sprite, Tower):
                 # Soldiers with a target must die only when colliding with the target tower
@@ -101,13 +113,15 @@ class Soldier(GameEntity):
                     self.die()
                     sprite.die_random_soldier(self)
                     break
-                
+
                 # Soldiers without a target must die when they collide with an enemy tower
                 if sprite.ownership != self.ownership.ownership:
                     print(f"Non e' il mio target {self.target} e {sprite}")
                     self.kill()
                     self.die()
-                    break 
+                    break
+
+                # TODO: If I hit a tower that is mine, I have to change my ownership to that tower.
 
     # Moves the instance in a random way
     def update_position(self, delta: int) -> None:
@@ -115,54 +129,57 @@ class Soldier(GameEntity):
             # Generates the displacement
             delta_x = randint(-1, 1) * self.speed * delta
             delta_y = randint(-1, 1) * self.speed * delta
-
-            # Updates the position of the instance
-            self.x += delta_x
-            self.y += delta_y
         else:
-            to_x = (
-                -1 if self.target.rect.centerx < self.rect.centerx else 1
-            )
-            to_y = (
-                -1 if self.target.rect.centery < self.rect.centery else 1
-            )
+            to_x = -1 if self.target.rect.centerx < self.rect.centerx else 1
+            to_y = -1 if self.target.rect.centery < self.rect.centery else 1
 
             delta_x = to_x * self.speed * delta
             delta_y = to_y * self.speed * delta
 
-            # Updates the position of the instance
-            self.x += delta_x
-            self.y += delta_y
-
-        # Moves the rectangle of the soldier
-        self.update_rect()
+        # Updates the position of the instance
+        self.x += delta_x / 20
+        self.y += delta_y / 20
 
     # Moves the rect of the ruler according to the current entity coordinates
     def update_rect(self) -> None:
         # Checks the position limit by looking at the center position only
         # TODO: Rectangle thickness is not checked, is it important?
         #  500 ** 2 + 600 ** 2 > 10 ** 2
-        """if (self.x - self.origin[0]) ** 2 + (self.y - self.origin[1]) ** 2 > self.origin_radius ** 2:
-        # Moves the center radially towards the center
-        # TODO: Verify if the atan is the correct function
-        angle = atan2(self.y, self.x).real
-        self.x = self.origin_radius * cos(angle).real
-        self.y = self.origin_radius * sin(angle).real
-        if self.x > self.origin[0] + self.origin_radius:
-            self.x = self.origin[0] + self.origin_radius
-        if self.x < self.origin[0] - self.origin_radius:
-            self.x = self.origin[0] - self.origin_radius
-        if self.y < self.origin[1] - self.origin_radius:
-            self.y = self.origin[1] - self.origin_radius
-        if self.y > self.origin[1] + self.origin_radius:
-            self.y = self.origin[1] + self.origin_radius"""
         # Moves the rect of the instance
+        if not self.target:
+            # Check that the new position if without target is inside tower area
+            """if (self.x - self.origin[0]) ** 2 + (self.y - self.origin[1]) ** 2 > self.origin_radius ** 2:
+            # Moves the center radially towards the center
+            # TODO: Verify if the atan is the correct function
+            angle = atan2(self.y, self.x).real
+            self.x = self.origin_radius * cos(angle).real
+            self.y = self.origin_radius * sin(angle).real
+            """
+            origin_x = self.ownership.rect.centerx
+            origin_y = self.ownership.rect.centery
+            if self.x > origin_x + self.origin_radius:
+                self.x = origin_x + self.origin_radius
+            if self.x < origin_x - self.origin_radius:
+                self.x = origin_x - self.origin_radius
+            if self.y < origin_y - self.origin_radius:
+                self.y = origin_y - self.origin_radius
+            if self.y > origin_y + self.origin_radius:
+                self.y = origin_y + self.origin_radius
+
         self.rect.center = (self.x, self.y)
+        should_enlarge = self.selected or self.ownership.selected
+        size = [1.5 * x for x in self.size] if should_enlarge else self.size
+
+        self.surf = pygame.Surface(size=size)
+        self.surf.fill(self.color)
 
         # After update we can reset the target
         # If the target has to change, it will change by route update.
         # self.target = None
         # Removed due to issue with enemy tower collision
+
+    def over(self, pos: Tuple[int, int], surface: pygame.Surface):
+        pass
 
     def update_tooltip(
         self, mouse_pos: Tuple[int, int], manager: pygame_gui.UIManager
@@ -183,3 +200,10 @@ class Soldier(GameEntity):
                 )
             )
             self.tooltip.find_valid_position(pos)
+
+    def change_ownership(self, owner: Tower):
+        """
+        This has to be called when the soldier has to change the ownership. Many operations have to be done in order to complete the process.
+        """
+        self.ownership = owner
+        self.color = self.ownership.soldier_color
