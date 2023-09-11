@@ -91,7 +91,8 @@ class Tower(GameEntity):
         self._update_labels()
 
     def mouse_over(self, pos: Tuple[int, int], surf: Surface) -> None:
-        if self.rect.collidepoint(pos):
+        self.selected = self.rect.collidepoint(pos)
+        if self.selected:
             # If it's my tower, I can color the circle of green.
             color = "green" if self.ownership.id == 0 else "red"
             pygame.draw.circle(surf, color, self.rect.center, 40, 1)
@@ -107,6 +108,7 @@ class Tower(GameEntity):
 
     def die_random_soldier(self, attacker):
         from rts.sprites.soldier import Soldier
+
         print("Die random soldier")
 
         c = EntityController()
@@ -117,7 +119,7 @@ class Tower(GameEntity):
                 if s.ownership == self:
                     s.kill()
                     self.soldier_died()
-        
+
         if isinstance(attacker, Soldier):
             if self.soldiers_number == 0:
                 self.change_ownership(attacker.ownership.ownership)
@@ -243,21 +245,30 @@ class Tower(GameEntity):
     def increase_level(self):
         if self.level < TOWER_MAX_LEVEL:
             self.level += 1
-    
+
     def change_ownership(self, owner: Ruler):
         """
         This has to be called when the tower has to change the ownership. Many operations have to be done in order to complete the process.
         """
         self.ownership = owner
         self.soldier_color = owner.color
-        
+
         from rts.sprites.route import Route
+
         # Every route from and to this tower have to be destroyed
         c = EntityController()
         for r in c.entities(Route):
             if isinstance(r, Route):
                 if r.start == self or r.end == self:
                     r.kill()
+
+        # Every soldier with this tower as a target has to go back
+        from rts.sprites.soldier import Soldier
+
+        for s in c.entities(Soldier):
+            if isinstance(s, Soldier):
+                if s.target == self:
+                    s.target = None
 
     def _reached_max_soldiers(self):
         return self.soldiers_number < LIMIT_PER_LEVEL[self.level - 1]

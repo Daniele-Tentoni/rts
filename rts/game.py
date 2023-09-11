@@ -195,7 +195,7 @@ class Game:
                 if self.has_to_trace(event):
                     print(f"Tracing {self.tower_traced}")
                     self.tower_traced = self.start_trace()
-            
+
             if mouse_pressed[2]:
                 for route in self.routes:
                     if route.rect.collidepoint(mouse_pos):
@@ -271,7 +271,7 @@ class Game:
         )
 
         clock = pygame.time.Clock()
-        rts.controllers.time_controller.clock_init = 0.0
+        self.time_controller.clock_init = 0.0
         # Keeps looping until exit is required
         while self.running:
             # Calculate the current delta_time from last frame
@@ -284,30 +284,27 @@ class Game:
 
             # Events manager
             self.event_controller.handle_events(self.manager)
-            """
-        elif self.has_to_un_trace(event):
-          self.stop_trace()
-          self.tower_traced = None
-        elif self.has_to_trace(event):
-          self.tower_traced = self.start_trace()
-      """
 
             mouse_pos = mouse.get_pos()
 
+            # Rulers update
+            rulers = self.entity_controller.entities(Ruler)
+            rulers.update(delta=time_delta)
+            for ruler in rulers:
+                ruler.mouse_over(mouse_pos, self.screen)
+
             # Towers update
-            if self.entity_controller.has(Tower):
-                towers = self.entity_controller.entity_dict[Tower]
-                towers.update(delta=time_delta)
-                for tower in towers:
-                    self.screen.blit(tower.surf, tower.rect)
-                    pygame.draw.rect(
-                        self.screen,
-                        TEXT_COLOR,
-                        tower.s_gen_rect,
-                        border_radius=2,
-                    )
-                    tower.update_tooltip(mouse_pos, self.manager)
-                    tower.mouse_over(mouse_pos, self.screen)
+            towers = self.entity_controller.entities(Tower)
+            towers.update(delta=time_delta)
+            for tower in towers:
+                pygame.draw.rect(
+                    self.screen,
+                    TEXT_COLOR,
+                    tower.s_gen_rect,
+                    border_radius=2,
+                )
+                tower.update_tooltip(mouse_pos, self.manager)
+                tower.mouse_over(mouse_pos, self.screen)
 
             # Route updates
             if self.tower_traced is not None:
@@ -323,22 +320,17 @@ class Game:
                 route.over(mouse_pos, self.screen)
 
             # Soldiers updates
-            if Soldier in self.entity_controller.entity_dict.keys():
-                soldiers = self.entity_controller.entity_dict[Soldier]
-                soldiers.update(time_delta)
-                for soldier in soldiers:
-                    self.screen.blit(soldier.surf, soldier.rect)
-                    soldier.update_tooltip(mouse_pos, self.manager)
-
-            # Rulers update
-            if Ruler in self.entity_controller.entity_dict.keys():
-                rulers = self.entity_controller.entity_dict[Ruler]
-                rulers.update(delta=time_delta)
-                for ruler in rulers:
-                    self.screen.blit(ruler.surf, ruler.rect)
-                    ruler.mouse_over(mouse_pos, self.screen)
+            soldiers = self.entity_controller.entities(Soldier)
+            soldiers.update(time_delta)
+            for soldier in soldiers:
+                soldier.update_tooltip(mouse_pos, self.manager)
 
             # Renders the scene
+            entities = self.entity_controller.game_entities
+            for sprite in entities:
+                self.screen.blit(sprite.surf, sprite.rect)
+
+            # Render the Gui
             self.manager.update(time_delta)
             self.manager.draw_ui(self.screen)
             display.flip()

@@ -59,6 +59,7 @@ def test_one_entity_to_check(
     assert sample_entity_controller.has(Soldier)
     assert sample_entity_controller.has_e(sample_soldier)
 
+
 def test_sprite_instances(sample_entity_controller: EntityController):
     r1 = Ruler(GameEntity(0, 0, [0, 0, 0], [0, 0]), 1)
     t1 = Tower(
