@@ -9,7 +9,13 @@ from rts.sprites.tower import Tower
 
 @pytest.fixture
 def sample_soldier() -> Soldier:
-    return Soldier(GameEntity(0, 0, [0, 0, 0], [0, 0]), [0, 0], 0, None, 0)
+    return Soldier(
+        GameEntity(0, 0, [0, 0, 0], [0, 0]),
+        [0, 0],
+        0,
+        GameEntity(0, 0, [0, 0, 0], [0, 0]),
+        0,
+    )
 
 
 @pytest.fixture
@@ -17,6 +23,9 @@ def delta() -> int:
     return 1
 
 
+@pytest.mark.skip(
+    reason="In this update, this was removed. In a future release, it will be readded only for stationary soldiers."
+)
 def test_simple_soldier_increment_initiative(
     sample_soldier: Soldier, delta: int
 ):
@@ -28,7 +37,13 @@ def test_simple_soldier_increment_initiative(
     )
 
 
+@pytest.mark.skip(
+    reason="In this update, this was removed. In a future release, it will be readded only for stationary soldiers."
+)
 def test_simple_soldier_reset_initiative(sample_soldier: Soldier, delta: int):
+    """
+    In this test we ensure that initiative will be decremented reaching the limit of 1.
+    """
     for i in range(0, 100):
         sample_soldier.update(delta=delta)
     assert abs(sample_soldier.initiative - 0.11) < 1e-16
@@ -68,7 +83,9 @@ def test_collision_between_soldiers():
     e = EntityController()
     e.register_entity(s1)
     e.register_entity(s2)
-    s1.update(1)
-    print(e.entity_dict[Soldier])
+
+    # With 0 delta entities don't move, so the two soldiers collide and have to be removed.
+    e.game_entities.update(delta=0)
+
     assert s1 not in e.entity_dict[Soldier]
     assert s2 not in e.entity_dict[Soldier]

@@ -40,7 +40,6 @@ class Game:
     running: bool
     """Define if the game has to go through the loop or exit it and stop his execution."""
 
-    routes: List[Route]
     tower_traced: Tower
 
     entity_controller: EntityController
@@ -75,7 +74,6 @@ class Game:
         """
 
         self.running = False
-        self.routes = list()
         self.tower_traced = None
 
         # Reference to the controllers, ensuring they are clean.
@@ -197,9 +195,9 @@ class Game:
                     self.tower_traced = self.start_trace()
 
             if mouse_pressed[2]:
-                for route in self.routes:
+                for route in self.entity_controller.entities(Route):
                     if route.rect.collidepoint(mouse_pos):
-                        self.routes.remove(route)
+                        route.kill()
 
         def mouse_up(**args):
             event = args.get("event")
@@ -314,7 +312,8 @@ class Game:
                 state_label = self.sys_font.render(state_string, 1, TEXT_COLOR)
                 self.screen.blit(state_label, (80, 80))
 
-            for route in self.routes:
+            routes = self.entity_controller.entities(Route)
+            for route in routes:
                 # draw.line(self.screen, TEXT_COLOR, route[0], route[1], width=2)
                 route.update(time_delta, self.screen)
                 route.over(mouse_pos, self.screen)
@@ -328,7 +327,9 @@ class Game:
             # Renders the scene
             entities = self.entity_controller.game_entities
             for sprite in entities:
-                self.screen.blit(sprite.surf, sprite.rect)
+                # Routes don't need to be blitted
+                if not isinstance(sprite, Route):
+                    self.screen.blit(sprite.surf, sprite.rect)
 
             # Render the Gui
             self.manager.update(time_delta)
@@ -369,14 +370,16 @@ class Game:
             )
             for tower in remaining_towers:
                 if tower_clicked(tower, pos):
-                    future_tuple = (
-                        self.tower_traced.rect.center,
-                        tower.rect.center,
-                    )
                     # TODO: Change the type to set instead of list? Performance improvement?
-                    if future_tuple not in self.routes:
+                    if self.tower_traced.exit_route:
+                        # TODO: Move in a GUI label of warning.
+                        print(
+                            "You can't create another exit route from this tower"
+                        )
+                    else:
                         print("link")
-                        self.routes.append(Route(self.tower_traced, tower))
+                        route = Route(self.tower_traced, tower)
+                        self.entity_controller.register_entity(route)
 
 
 def tower_clicked(tower: Tower, mouse) -> bool:

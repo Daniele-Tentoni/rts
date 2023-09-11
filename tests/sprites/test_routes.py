@@ -1,9 +1,11 @@
 from pygame import Surface
 import pytest
 from rts.config import TEXT_COLOR
+from rts.controllers.entity_controller import EntityController
 from rts.models.game_entity import GameEntity
 from rts.sprites.route import Route
 from rts.sprites.ruler import Ruler
+from rts.sprites.soldier import Soldier
 from rts.sprites.tower import Tower
 
 
@@ -57,3 +59,23 @@ def test_width_over(sample_route: Route):
     sample_route.over(mouse_pos)
     assert sample_route.width == 4
     assert sample_route.color == "green"
+
+
+def test_route_update(sample_route: Route):
+    c = EntityController()
+    c.reset()
+
+    s1 = Soldier(
+        GameEntity(0, 0, [0, 0, 0], [1, 1]), [0, 0], 0, sample_route.start, 0
+    )
+    s2 = Soldier(
+        GameEntity(0, 1, [0, 0, 0], [1, 1]), [0, 0], 0, sample_route.end, 0
+    )
+
+    c.register_entity(s1)
+    c.register_entity(s2)
+
+    sample_route.update(delta=0, screen=Surface([0, 0]))
+
+    assert s1.target == sample_route.end
+    assert s2.target == sample_route.start

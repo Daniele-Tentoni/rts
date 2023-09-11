@@ -77,6 +77,10 @@ class Tower(GameEntity):
         self.soldier_gen_ratio = soldier_gen_ratio
         self.tower_tooltip: pygame_gui.elements.UITooltip = None
 
+        from rts.sprites.route import Route
+
+        self.exit_route: Route = None
+
     # Updates the state of the instance
     def update(self, delta: int) -> None:
         """Update tower and her soldiers.

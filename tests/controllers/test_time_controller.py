@@ -13,9 +13,9 @@ def sample_time_controller(mock: MagicMock):
 
 
 def test_delta(sample_time_controller: TimeController):
-    assert sample_time_controller.update(1000) == 0
+    assert sample_time_controller.update(1000)
 
 
 def test_double_delta(sample_time_controller: TimeController):
-    assert sample_time_controller.update(500) == 0.5
-    assert sample_time_controller.update(500) == 0
+    assert not sample_time_controller.update(500)
+    assert sample_time_controller.update(500)

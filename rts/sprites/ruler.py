@@ -74,7 +74,6 @@ class Ruler(GameEntity):
             # Check if the soldier hit is owned by the ruler or not.
             if s.ownership.ownership != self:
                 i.die()
-                soldiers.remove(i)
 
     # Moves the instance depending on the keys pressed
     def update_position(self) -> None:

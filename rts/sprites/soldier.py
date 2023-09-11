@@ -20,10 +20,6 @@ class Soldier(GameEntity):
     target: Tower
 
     selected: bool
-    """
-    Gets or sets if the soldier is selected or not.
-    You can select a soldier by moving mouse over it or over the tower owner.
-    """
 
     # Constructor
     def __init__(
@@ -95,11 +91,9 @@ class Soldier(GameEntity):
                 # If enemy, everyone has to die
                 if sprite.ownership.ownership != self.ownership.ownership:
                     # Kill the enemy.
-                    sprite.kill()
                     sprite.die()
 
                     # Kill the sprite itself.
-                    self.kill()
                     self.die()
                     # Break to remove only one soldier each soldier collision.
                     break
@@ -109,7 +103,6 @@ class Soldier(GameEntity):
                 # Soldiers with a target must die only when colliding with the target tower
                 if self.target == sprite:
                     print("E' il mio target!!!")
-                    self.kill()
                     self.die()
                     sprite.die_random_soldier(self)
                     break
@@ -117,7 +110,6 @@ class Soldier(GameEntity):
                 # Soldiers without a target must die when they collide with an enemy tower
                 if sprite.ownership != self.ownership.ownership:
                     print(f"Non e' il mio target {self.target} e {sprite}")
-                    self.kill()
                     self.die()
                     break
 

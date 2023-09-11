@@ -4,15 +4,17 @@ from pygame import Rect, Surface
 import pygame
 from rts.config import TEXT_COLOR
 from rts.controllers.entity_controller import EntityController
+from rts.models.game_entity import GameEntity
 from rts.sprites.soldier import Soldier
 from rts.sprites.tower import Tower
 
 
-class Route:
+class Route(GameEntity):
     start: Tower
     end: Tower
 
     def __init__(self, start: Tower, end: Tower) -> None:
+        super(Route, self).__init__(0, 0, [0, 0, 0], [0, 0])
         self.start = start
         self.end = end
 
