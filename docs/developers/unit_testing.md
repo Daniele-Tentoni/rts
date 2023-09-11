@@ -24,6 +24,8 @@ Use `--cov=rts` to measure the code coverage.
 
 Use `--cov-report term-missing:skip-covered --cov=rts` to report missing covered lines without showing full covered files.
 
+The complete command used by me in last development is `poetry run python -m pytest tests --cov=rts --cov-report term-missing:skip-covered`.
+
 Tests are executed remotely only for pull_requests. Runs them before commit and push changes. Pre commit hooks will be added to the project in near future.
 
 ### Unit testing on video/audio-less devices
