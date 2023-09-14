@@ -50,7 +50,7 @@ jobs:
         run: poetry run python -m pytest --cov=rts --cov-report=xml --durations=3 tests/
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./coverage.xml
           flags: unittests
